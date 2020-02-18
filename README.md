@@ -57,8 +57,7 @@ end program main
 Compile, link, and run the example with:
 
 ```
-$ gfortran9 -I/usr/local/include/lua53/ -L/usr/local/lib/lua/5.3/ \
-  -o example example.f90 lua.o -llua-5.3
+$ gfortran -I/usr/local/include/lua53/ -L/usr/local/lib/lua/5.3/ -o example example.f90 lua.o -llua-5.3
 $ ./example
 Hello from Lua!
 ```
@@ -81,46 +80,58 @@ $ make examples
 Or use the name of a particular example.
 
 ## Coverage
-| Function Name      | Fortran Interface Name | Bound |
-|--------------------|------------------------|-------|
-| `lua_arith`        | `lua_arith`            |   ✓   |
-| `lua_call`         | `lua_call`             |   ✓   |
-| `lua_callk`        | `lua_callk`            |   ✓   |
-| `lua_checkstack`   | `lua_checkstack`       |   ✓   |
-| `lua_close`        | `lua_close`            |   ✓   |
-| `lua_compare`      | `lua_compare`          |   ✓   |
-| `lua_concat`       | `lua_concat`           |   ✓   |
-| `lua_copy`         | `lua_copy`             |   ✓   |
-| `lua_createtable`  | `lua_createtable`      |   ✓   |
-| `lua_gc`           | `lua_gc`               |   ✓   |
-| `lua_getglobal`    | `lua_getglobal`        |   ✓   |
-| `lua_isboolean`    | `lua_isboolean`        |   ✓   |
-| `lua_iscfunction`  | `lua_iscfunction`      |   ✓   |
-| `lua_isfunction`   | `lua_isfunction`       |   ✓   |
-| `lua_isnil`        | `lua_isnil`            |   ✓   |
-| `lua_isnone`       | `lua_isnone`           |   ✓   |
-| `lua_isnoneornil`  | `lua_isnoneornil`      |   ✓   |
-| `lua_isnumber`     | `lua_isnumber`         |   ✓   |
-| `lua_isstring`     | `lua_isstring`         |   ✓   |
-| `lua_istable`      | `lua_istable`          |   ✓   |
-| `lua_isthread`     | `lua_isthread`         |   ✓   |
-| `lua_isuserdata`   | `lua_isuserdata`       |   ✓   |
-| `lua_isyieldable`  | `lua_isyieldable`      |   ✓   |
-| `lua_load`         | `lua_load`             |   ✓   |
-| `lua_newtable`     | `lua_newtable`         |   ✓   |
-| `lua_pcall`        | `lua_pcall`            |   ✓   |
-| `lua_register`     | `lua_register`         |   ✓   |
-| `lua_setglobal`    | `lua_setglobal`        |   ✓   |
-| `lua_status`       | `lua_status`           |   ✓   |
-| `lua_tostring`     | `lua_tostring`         |   ✓   |
-| `lua_type`         | `lua_type`             |   ✓   |
-| `lua_typename`     | `lua_typename`         |   ✓   |
-| `luaL_dofile`      | `lual_dofile`          |   ✓   |
-| `luaL_loadfile`    | `lual_loadfile`        |   ✓   |
-| `luaL_loadfilex`   | `lual_loadfilex`       |   ✓   |
-| `luaL_loadstring`  | `lual_loadstring`      |   ✓   |
-| `luaL_newstate`    | `lual_newstate`        |   ✓   |
-| `luaL_openlibs`    | `lual_openlibs`        |   ✓   |
+| Function Name           | Fortran Interface Name  | Bound |
+|-------------------------|-------------------------|-------|
+| `lua_arith`             | `lua_arith`             |   ✓   |
+| `lua_call`              | `lua_call`              |   ✓   |
+| `lua_callk`             | `lua_callk`             |   ✓   |
+| `lua_checkstack`        | `lua_checkstack`        |   ✓   |
+| `lua_close`             | `lua_close`             |   ✓   |
+| `lua_compare`           | `lua_compare`           |   ✓   |
+| `lua_concat`            | `lua_concat`            |   ✓   |
+| `lua_copy`              | `lua_copy`              |   ✓   |
+| `lua_createtable`       | `lua_createtable`       |   ✓   |
+| `lua_gc`                | `lua_gc`                |   ✓   |
+| `lua_getglobal`         | `lua_getglobal`         |   ✓   |
+| `lua_isboolean`         | `lua_isboolean`         |   ✓   |
+| `lua_iscfunction`       | `lua_iscfunction`       |   ✓   |
+| `lua_isfunction`        | `lua_isfunction`        |   ✓   |
+| `lua_isnil`             | `lua_isnil`             |   ✓   |
+| `lua_isnone`            | `lua_isnone`            |   ✓   |
+| `lua_isnoneornil`       | `lua_isnoneornil`       |   ✓   |
+| `lua_isnumber`          | `lua_isnumber`          |   ✓   |
+| `lua_isstring`          | `lua_isstring`          |   ✓   |
+| `lua_istable`           | `lua_istable`           |   ✓   |
+| `lua_isthread`          | `lua_isthread`          |   ✓   |
+| `lua_isuserdata`        | `lua_isuserdata`        |   ✓   |
+| `lua_isyieldable`       | `lua_isyieldable`       |   ✓   |
+| `lua_load`              | `lua_load`              |   ✓   |
+| `lua_newtable`          | `lua_newtable`          |   ✓   |
+| `lua_pcall`             | `lua_pcall`             |   ✓   |
+| `lua_pop`               | `lua_pop`               |   ✓   |
+| `lua_pushboolean`       | `lua_pushboolean`       |   ✓   |
+| `lua_pushcclosure`      | `lua_pushcclosure`      |   ✓   |
+| `lua_pushfstring`       |                         |   –   |
+| `lua_pushinteger`       | `lua_pushinteger`       |   ✓   |
+| `lua_pushlightuserdata` | `lua_pushlightuserdata` |   ✓   |
+| `lua_pushlstring`       | `lua_pushlstring`       |   ✓   |
+| `lua_pushnil`           | `lua_pushnil`           |   ✓   |
+| `lua_pushnumber`        | `lua_pushnumber`        |   ✓   |
+| `lua_pushstring`        | `lua_pushstring`        |   ✓   |
+| `lua_pushthread`        | `lua_pushthread`        |   ✓   |
+| `lua_pushvfstring`      |                         |   –   |
+| `lua_register`          | `lua_register`          |   ✓   |
+| `lua_setglobal`         | `lua_setglobal`         |   ✓   |
+| `lua_status`            | `lua_status`            |   ✓   |
+| `lua_tostring`          | `lua_tostring`          |   ✓   |
+| `lua_type`              | `lua_type`              |   ✓   |
+| `lua_typename`          | `lua_typename`          |   ✓   |
+| `luaL_dofile`           | `lual_dofile`           |   ✓   |
+| `luaL_loadfile`         | `lual_loadfile`         |   ✓   |
+| `luaL_loadfilex`        | `lual_loadfilex`        |   ✓   |
+| `luaL_loadstring`       | `lual_loadstring`       |   ✓   |
+| `luaL_newstate`         | `lual_newstate`         |   ✓   |
+| `luaL_openlibs`         | `lual_openlibs`         |   ✓   |
 
 ## Licence
 ISC

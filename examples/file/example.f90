@@ -9,10 +9,9 @@ program main
 
     call lual_openlibs(l)
 
-    rc = lual_dofile(l, 'examples/lua/hello.lua')
-    rc = lua_getglobal(l, 'hello')
+    rc = lual_dofile(l, 'fibonacci.lua')
+    rc = lua_getglobal(l, 'fib')
     rc = lua_pcall(l, 0, 0, 0)
 
     call lua_close(l)
-    ! print '(2a)', 'Cannot run function: ', trim(lua_tostring(l, -1))
 end program main

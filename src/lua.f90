@@ -35,6 +35,16 @@ module lua
     public :: lua_load
     public :: lua_newtable
     public :: lua_pcall
+    public :: lua_pop
+    public :: lua_pushboolean
+    public :: lua_pushcclosure
+    public :: lua_pushinteger
+    public :: lua_pushlightuserdata
+    public :: lua_pushlstring
+    public :: lua_pushnil
+    public :: lua_pushnumber
+    public :: lua_pushstring
+    public :: lua_pushthread
     public :: lua_register
     public :: lua_setglobal
     public :: lua_status
@@ -274,6 +284,30 @@ module lua
             integer(kind=c_int)                         :: lua_pcallk
         end function lua_pcallk
 
+        ! const char *lua_pushlstring(lua_State *L, const char *s, size_t len)
+        function lua_pushlstring(l, s, len) bind(c, name='lua_pushlstring')
+            import :: c_char, c_ptr, c_size_t
+            type(c_ptr),            intent(in), value :: l
+            character(kind=c_char), intent(in)        :: s
+            integer(kind=c_size_t), intent(in), value :: len
+            type(c_ptr)                               :: lua_pushlstring
+        end function lua_pushlstring
+
+        ! const char *lua_pushstring(lua_State *L, const char *s)
+        function lua_pushstring(l, s) bind(c, name='lua_pushstring')
+            import :: c_char, c_ptr
+            type(c_ptr),            intent(in), value :: l
+            character(kind=c_char), intent(in)        :: s
+            type(c_ptr)                               :: lua_pushstring
+        end function lua_pushstring
+
+        ! int lua_pushthread(lua_State *L)
+        function lua_pushthread(l) bind(c, name='lua_pushthread')
+            import :: c_int, c_ptr
+            type(c_ptr), intent(in), value :: l
+            integer(kind=c_int)            :: lua_pushthread
+        end function lua_pushthread
+
         ! void lua_arith(lua_State *L, int op)
         subroutine lua_arith(l, op) bind(c, name='lua_arith')
             import :: c_int, c_ptr
@@ -355,6 +389,33 @@ module lua
             type(c_funptr),      intent(in), value :: fn
             integer(kind=c_int), intent(in), value :: n
         end subroutine lua_pushcclosure
+
+        ! void lua_pushinteger(lua_State *L, lua_Integer n)
+        subroutine lua_pushinteger(l, n) bind(c, name='lua_pushinteger')
+            import :: c_int, c_ptr
+            type(c_ptr),         intent(in), value :: l
+            integer(kind=c_int), intent(in), value :: n
+        end subroutine lua_pushinteger
+
+        ! void  lua_pushlightuserdata(lua_State *L, void *p)
+        subroutine lua_pushlightuserdata(l, p) bind(c, name='lua_pushlightuserdata')
+            import :: c_ptr
+            type(c_ptr), intent(in), value :: l
+            type(c_ptr), intent(in), value :: p
+        end subroutine lua_pushlightuserdata
+
+        ! void lua_pushnil(lua_State *L)
+        subroutine lua_pushnil(l) bind(c, name='lua_pushnil')
+            import :: c_ptr
+            type(c_ptr), intent(in), value :: l
+        end subroutine lua_pushnil
+
+        ! void lua_pushnumber(lua_State *L, lua_Number n)
+        subroutine lua_pushnumber(l, n) bind(c, name='lua_pushnumber')
+            import :: c_float, c_ptr
+            type(c_ptr),        intent(in), value :: l
+            real(kind=c_float), intent(in), value :: n
+        end subroutine lua_pushnumber
 
         ! void lua_setglobal(lua_State *L, const char *name)
         subroutine lua_setglobal(l, name) bind(c, name='lua_setglobal')
