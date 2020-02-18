@@ -3,15 +3,28 @@ program main
     use :: lua
     implicit none
     type(c_ptr) :: l
+    integer     :: nargs    = 1
+    integer     :: nresults = 2
     integer     :: rc
+    integer     :: r1, r2   = 0
+    integer     :: x        = 10
 
     l = lual_newstate()
-
     call lual_openlibs(l)
-
     rc = lual_dofile(l, 'fibonacci.lua')
     rc = lua_getglobal(l, 'fib')
-    rc = lua_pcall(l, 0, 0, 0)
+
+    if (lua_isfunction(l, -1)) then
+        call lua_pushinteger(l, x)
+        rc = lua_pcall(l, nargs, nresults, 0)
+
+        r1 = lua_tointeger(l, -1)
+        r2 = lua_tointeger(l, -2)
+
+        call lua_pop(l, 2)
+
+        print '("fibonacci(", i0, ") = ", i0)', x, r2
+    end if
 
     call lua_close(l)
 end program main
