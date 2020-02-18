@@ -16,15 +16,16 @@ Simply run the `Makefile` with `make` and (optional) parameters:
 $ make FC=gfortran9 PREFIX=/usr
 ```
 
-Variables are imported from file `Makefile.inc`. Link your Fortran applications
-with `-llua-5.3` to access Lua 5.3.
+This will output the object file `lua.o` for linking. Variables are imported
+from file `Makefile.inc`. Link your Fortran applications with `-llua-5.3` to
+access
+Lua 5.3.
 
 ## Example
 The following basic example shows how to call the Lua function `hello()` in
 `script.lua` from Fortran.
 
 ```lua
-#!/usr/bin/env lua53
 -- script.lua
 function hello()
     print('Hello from Lua!')
@@ -93,9 +94,11 @@ Or use the name of a particular example.
 | `lua_createtable`       | `lua_createtable`       |   ✓   |
 | `lua_gc`                | `lua_gc`                |   ✓   |
 | `lua_getglobal`         | `lua_getglobal`         |   ✓   |
+| `lua_gettop`            | `lua_gettop`            |   ✓   |
 | `lua_isboolean`         | `lua_isboolean`         |   ✓   |
 | `lua_iscfunction`       | `lua_iscfunction`       |   ✓   |
 | `lua_isfunction`        | `lua_isfunction`        |   ✓   |
+| `lua_isinteger`         | `lua_isinteger`         |   ✓   |
 | `lua_isnil`             | `lua_isnil`             |   ✓   |
 | `lua_isnone`            | `lua_isnone`            |   ✓   |
 | `lua_isnoneornil`       | `lua_isnoneornil`       |   ✓   |
@@ -108,10 +111,11 @@ Or use the name of a particular example.
 | `lua_load`              | `lua_load`              |   ✓   |
 | `lua_newtable`          | `lua_newtable`          |   ✓   |
 | `lua_pcall`             | `lua_pcall`             |   ✓   |
+| `lua_pcallk`            | `lua_pcallk`            |   ✓   |
 | `lua_pop`               | `lua_pop`               |   ✓   |
 | `lua_pushboolean`       | `lua_pushboolean`       |   ✓   |
 | `lua_pushcclosure`      | `lua_pushcclosure`      |   ✓   |
-| `lua_pushfstring`       |                         |   –   |
+| `lua_pushfstring`       |                         |       |
 | `lua_pushinteger`       | `lua_pushinteger`       |   ✓   |
 | `lua_pushlightuserdata` | `lua_pushlightuserdata` |   ✓   |
 | `lua_pushlstring`       | `lua_pushlstring`       |   ✓   |
@@ -119,9 +123,11 @@ Or use the name of a particular example.
 | `lua_pushnumber`        | `lua_pushnumber`        |   ✓   |
 | `lua_pushstring`        | `lua_pushstring`        |   ✓   |
 | `lua_pushthread`        | `lua_pushthread`        |   ✓   |
-| `lua_pushvfstring`      |                         |   –   |
+| `lua_pushvalue`         | `lua_pushvalue`         |   ✓   |
+| `lua_pushvfstring`      |                         |       |
 | `lua_register`          | `lua_register`          |   ✓   |
 | `lua_setglobal`         | `lua_setglobal`         |   ✓   |
+| `lua_settop`            | `lua_settop`            |   ✓   |
 | `lua_status`            | `lua_status`            |   ✓   |
 | `lua_tostring`          | `lua_tostring`          |   ✓   |
 | `lua_type`              | `lua_type`              |   ✓   |

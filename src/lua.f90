@@ -20,9 +20,11 @@ module lua
     public :: lua_createtable
     public :: lua_gc
     public :: lua_getglobal
+    public :: lua_gettop
     public :: lua_isboolean
     public :: lua_iscfunction
     public :: lua_isfunction
+    public :: lua_isinteger
     public :: lua_isnil
     public :: lua_isnone
     public :: lua_isnoneornil
@@ -35,6 +37,7 @@ module lua
     public :: lua_load
     public :: lua_newtable
     public :: lua_pcall
+    public :: lua_pcallk
     public :: lua_pop
     public :: lua_pushboolean
     public :: lua_pushcclosure
@@ -45,9 +48,13 @@ module lua
     public :: lua_pushnumber
     public :: lua_pushstring
     public :: lua_pushthread
+    public :: lua_pushvalue
     public :: lua_register
     public :: lua_setglobal
+    public :: lua_settop
     public :: lua_status
+    public :: lua_tointeger
+    public :: lua_tointegerx
     public :: lua_tostring
     public :: lua_type
     public :: lua_typename
@@ -159,6 +166,13 @@ module lua
             integer(kind=c_int)                       :: lua_getglobal_
         end function lua_getglobal_
 
+        ! int lua_gettop(lua_State *L)
+        function lua_gettop(l) bind(c, name='lua_gettop')
+            import :: c_int, c_ptr
+            type(c_ptr), intent(in), value :: l
+            integer(kind=c_int)            :: lua_gettop
+        end function lua_gettop
+
         ! int lua_iscfunction(lua_State *L, int idx)
         function lua_iscfunction(l, idx) bind(c, name='lua_iscfunction')
             import :: c_int, c_ptr
@@ -223,6 +237,15 @@ module lua
             type(c_ptr), intent(in), value :: l
             integer(kind=c_int)            :: lua_status
         end function lua_status
+
+        ! lua_Integer lua_tointegerx(lua_State *L, int idx, int *isnum)
+        function lua_tointegerx(l, idx, isnum) bind(c, name='lua_tointegerx')
+            import :: c_int, c_ptr
+            type(c_ptr),         intent(in), value :: l
+            integer(kind=c_int), intent(in), value :: idx
+            type(c_ptr),         intent(in), value :: isnum
+            integer(kind=c_int)                    :: lua_tointegerx
+        end function lua_tointegerx
 
         ! const char *lua_tolstring(lua_State *L, int idx, size_t *len)
         function lua_tolstring(l, idx, len) bind(c, name='lua_tolstring')
@@ -315,14 +338,6 @@ module lua
             integer(kind=c_int), intent(in), value :: op
         end subroutine lua_arith
 
-        ! void lua_call(lua_State *L, int nargs, int nresults)
-        subroutine lua_call(l, nargs, nresults) bind(c, name='lua_call')
-            import :: c_int, c_ptr
-            type(c_ptr),         intent(in), value :: l
-            integer(kind=c_int), intent(in), value :: nargs
-            integer(kind=c_int), intent(in), value :: nresults
-        end subroutine lua_call
-
         ! void lua_callk(lua_State *L, int nargs, int nresults, int ctx, lua_CFunction k)
         subroutine lua_callk(l, nargs, nresults, ctx, k) bind(c, name='lua_callk')
             import :: c_funptr, c_int, c_intptr_t, c_ptr
@@ -368,13 +383,6 @@ module lua
             type(c_ptr), intent(in), value :: l
         end subroutine lua_newtable
 
-        ! void lua_pop(lua_State *L, int n)
-        subroutine lua_pop(l, n) bind(c, name='lua_pop')
-            import :: c_int, c_ptr
-            type(c_ptr),         intent(in), value :: l
-            integer(kind=c_int), intent(in), value :: n
-        end subroutine lua_pop
-
         ! void lua_pushboolean(lua_State *L, int b)
         subroutine lua_pushboolean(l, b) bind(c, name='lua_pushboolean')
             import :: c_int, c_ptr
@@ -417,12 +425,26 @@ module lua
             real(kind=c_float), intent(in), value :: n
         end subroutine lua_pushnumber
 
+        ! void  lua_pushvalue(lua_State *L, int idx)
+        subroutine lua_pushvalue(l, idx) bind(c, name='lua_pushvalue')
+            import :: c_int, c_ptr
+            type(c_ptr),         intent(in), value :: l
+            integer(kind=c_int), intent(in), value :: idx
+        end subroutine lua_pushvalue
+
         ! void lua_setglobal(lua_State *L, const char *name)
         subroutine lua_setglobal(l, name) bind(c, name='lua_setglobal')
             import :: c_char, c_ptr
             type(c_ptr),            intent(in), value :: l
             character(kind=c_char), intent(in)        :: name
         end subroutine lua_setglobal
+
+        ! void lua_settop(lua_State *L, int idx)
+        subroutine lua_settop(l, idx) bind(c, name='lua_settop')
+            import :: c_int, c_ptr
+            type(c_ptr),         intent(in), value :: l
+            integer(kind=c_int), intent(in), value :: idx
+        end subroutine lua_settop
 
         ! void luaL_openlibs(lua_State *L)
         subroutine lual_openlibs(l) bind(c, name='luaL_openlibs')
@@ -565,6 +587,15 @@ contains
         lua_pcall = lua_pcallk(l, nargs, nresults, msgh, int(0, kind=8), c_null_ptr)
     end function lua_pcall
 
+    ! lua_Integer lua_tointeger(lua_State *l, int idx)
+    function lua_tointeger(l, idx)
+        type(c_ptr), intent(in) :: l
+        integer,     intent(in) :: idx
+        integer                 :: lua_tointeger
+
+        lua_tointeger = lua_tointegerx(l, idx, c_null_ptr)
+    end function lua_tointeger
+
     ! const char *lua_tostring(lua_State *L, int index)
     function lua_tostring(l, i)
         !! Wrapper that calls `lua_tolstring()` and converts the returned C
@@ -634,6 +665,23 @@ contains
 
         lual_loadstring = lual_loadstring_(l, s // c_null_char)
     end function lual_loadstring
+
+    ! void lua_call(lua_State *L, int nargs, int nresults)
+    subroutine lua_call(l, nargs, nresults)
+        type(c_ptr), intent(in) :: l
+        integer,     intent(in) :: nargs
+        integer,     intent(in) :: nresults
+
+        call lua_callk(l, nargs, nresults, int(0, kind=8), c_null_ptr)
+    end subroutine lua_call
+
+    ! void lua_pop(lua_State *l, int n)
+    subroutine lua_pop(l, n)
+        type(c_ptr), intent(in) :: l
+        integer,     intent(in) :: n
+
+        call lua_settop(l, -n - 1)
+    end subroutine lua_pop
 
     ! void lua_pushcfunction(lua_State *L, lua_CFunction f)
     subroutine lua_pushcfunction(l, f)
