@@ -1,4 +1,8 @@
 ! fortran.f90
+!
+! The function `luaopen_fortran()` is called by Lua to register the Fortran
+! routine `hello()`. Compile this Fortran module as a shared library and run
+! `example.lua`.
 module fortran
     use, intrinsic :: iso_c_binding, only: c_int, c_funloc, c_ptr
     use :: lua

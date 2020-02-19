@@ -1,3 +1,7 @@
+! example.f90
+!
+! Example program that calls the recursive Lua routine `fib()` in file
+! `fibonacci.lua` and outputs the result.
 program main
     use, intrinsic :: iso_c_binding, only: c_null_char, c_ptr
     use :: lua

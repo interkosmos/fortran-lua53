@@ -68,7 +68,7 @@ On Linux, change the prefix `/usr/local` to `/usr`.
 ## Further Examples
 Additional examples can be found in `examples/`.
 
-* **file:** calls a Lua routine loaded from file.
+* **fibonacci:** calls a recursive Lua routine loaded from file.
 * **library:** calls a Fortran routine inside a shared library from Lua.
 * **string:** runs Lua code stored in a Fortran string.
 
