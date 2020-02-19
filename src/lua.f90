@@ -65,7 +65,7 @@ module lua
     public :: lual_newstate
     public :: lual_openlibs
 
-    ! Option for multiple returns in `lua_pcall` and `lua_call`.
+    ! Option for multiple returns in `lua_pcall()` and `lua_call()`.
     integer(kind=c_int), parameter, public :: LUA_MULTRET = -1
 
     ! Basic types.

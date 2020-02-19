@@ -10,7 +10,13 @@ Similar projects:
 * [luaf](https://bitbucket.org/vadimz/luaf/): Selected bindings to Lua 5.1 (MIT).
 
 ## Build
-Simply run the `Makefile` with `make` and (optional) parameters:
+Install Lua 5.3 with development headers. On FreeBSD, run:
+
+```
+# pkg install lang/lua53
+```
+
+Execute `make` with (optional) parameters to build the interfaces:
 
 ```
 $ make FC=gfortran9 PREFIX=/usr
@@ -18,8 +24,7 @@ $ make FC=gfortran9 PREFIX=/usr
 
 This will output the object file `lua.o` for linking. Variables are imported
 from file `Makefile.inc`. Link your Fortran applications with `-llua-5.3` to
-access
-Lua 5.3.
+access Lua 5.3.
 
 ## Example
 The following basic example shows how to call the Lua function `hello()` in
