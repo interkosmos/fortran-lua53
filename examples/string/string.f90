@@ -1,7 +1,7 @@
 ! string.f90
 ! Example that shows how to run Lua code from a string.
 program main
-    use, intrinsic :: iso_c_binding, only: c_null_char, c_ptr
+    use, intrinsic :: iso_c_binding, only: c_ptr
     use :: lua
     implicit none
     type(c_ptr) :: l

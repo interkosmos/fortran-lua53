@@ -3,7 +3,7 @@
 ! Example program that calls the recursive Lua routine `fib()` in file
 ! `fibonacci.lua` and outputs the result.
 program main
-    use, intrinsic :: iso_c_binding, only: c_null_char, c_ptr
+    use, intrinsic :: iso_c_binding, only: c_ptr
     use :: lua
     implicit none
     type(c_ptr) :: l

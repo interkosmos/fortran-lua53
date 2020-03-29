@@ -19,7 +19,7 @@ Install Lua 5.3 with development headers. On FreeBSD, run:
 Execute `make` with (optional) parameters to build the interfaces:
 
 ```
-$ make FC=gfortran9 PREFIX=/usr
+$ make FC=gfortran9 PREFIX=/usr/local
 ```
 
 This will output the object file `lua.o` for linking. Variables are imported
@@ -43,7 +43,7 @@ application.
 ```fortran
 ! example.f90
 program main
-    use, intrinsic :: iso_c_binding, only: c_null_char, c_ptr
+    use, intrinsic :: iso_c_binding, only: c_ptr
     use :: lua
     implicit none
     type(c_ptr) :: l

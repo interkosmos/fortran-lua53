@@ -3,11 +3,11 @@
 
 -include Makefile.inc
 
-.PHONY: all clean file library string
+.PHONY: all clean fibonacci library string
 
 default: all
 
-examples: file library string
+examples: fibonacci library string
 
 all: $(LIB)
 
