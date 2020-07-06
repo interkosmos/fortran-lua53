@@ -67,7 +67,12 @@ $ ./example
 Hello from Lua!
 ```
 
-On Linux, change the prefix `/usr/local` to `/usr`.
+On Linux, change the prefix `/usr/local` to `/usr`. To link Lua 5.3 statically,
+run instead:
+
+```
+$ gfortran -o example example.f90 lua.o /usr/local/lib/liblua-5.3.a
+```
 
 ## Further Examples
 Additional examples can be found in `examples/`.
