@@ -16,7 +16,7 @@ Install Lua 5.3 with development headers. On FreeBSD, run:
 # pkg install lang/lua53
 ```
 
-Use [xmake](https://github.com/xmake-io/xmake) to build the fortran-lua53:
+Use [xmake](https://github.com/xmake-io/xmake) to build fortran-lua53:
 
 ```
 $ xmake
