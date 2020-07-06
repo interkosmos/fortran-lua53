@@ -61,6 +61,7 @@ end program main
 Compile, link, and run the example with:
 
 ```
+$ gfortran src/lua.f90
 $ gfortran -I/usr/local/include/lua53/ -L/usr/local/lib/lua/5.3/ -o example example.f90 lua.o -llua-5.3
 $ ./example
 Hello from Lua!
