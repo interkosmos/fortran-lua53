@@ -22,8 +22,8 @@ Use [xmake](https://github.com/xmake-io/xmake) to build fortran-lua53:
 $ xmake -j1
 ```
 
-Link your Fortran applications statically against Lua 5.3 or dynamically with
-`-llua-5.3`.
+Link your Fortran applications statically against `liblua-5.3.a` or dynamically
+with `-llua-5.3`.
 
 ## Example
 The following basic example shows how to call the Lua function `hello()` in
@@ -63,7 +63,8 @@ Compile, (dynamically) link, and run the example with:
 
 ```
 $ gfortran -c src/lua.f90
-$ gfortran -I/usr/local/include/lua53/ -L/usr/local/lib/lua/5.3/ -o example example.f90 lua.o -llua-5.3
+$ gfortran -I/usr/local/include/lua53/ -L/usr/local/lib/lua/5.3/ \
+  -o example example.f90 lua.o -llua-5.3
 $ ./example
 Hello from Lua!
 ```
@@ -81,14 +82,6 @@ Additional examples can be found in `examples/`.
 * **fibonacci:** calls a recursive Lua routine loaded from file.
 * **library:** calls a Fortran routine inside a shared library from Lua.
 * **string:** runs Lua code stored in a Fortran string.
-
-Compile all examples with:
-
-```
-$ make examples
-```
-
-Or use the name of a particular example.
 
 ## Coverage
 | Function Name           | Fortran Interface Name  | Bound |
