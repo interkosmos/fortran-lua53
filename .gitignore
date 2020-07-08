@@ -1,6 +1,8 @@
 *.so
 *.a
 
+.git/
+.xmake/
 env/
 build/
 dist/

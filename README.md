@@ -19,10 +19,11 @@ Install Lua 5.3 with development headers. On FreeBSD, run:
 Use [xmake](https://github.com/xmake-io/xmake) to build fortran-lua53:
 
 ```
-$ xmake
+$ xmake -j1
 ```
 
-Link your Fortran applications with `-llua-5.3`.
+Link your Fortran applications statically against Lua 5.3 or dynamically with
+`-llua-5.3`.
 
 ## Example
 The following basic example shows how to call the Lua function `hello()` in
@@ -58,7 +59,7 @@ program main
 end program main
 ```
 
-Compile, link, and run the example with:
+Compile, (dynamically) link, and run the example with:
 
 ```
 $ gfortran -c src/lua.f90

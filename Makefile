@@ -17,9 +17,9 @@ FCLD=/usr/local/bin/gfortran
 AR=/usr/local/bin/ar
 
 string_FCFLAGS=-I/usr/local/include -I/usr/include -m64
-string_FCLDFLAGS=-Lbuild -L/usr/local/lib -L/usr/lib -lfortran-lua53 -llua-5.3 -m64
+string_FCLDFLAGS=-L/usr/home/philipp/Programmieren/Fortran/fortran-lua53 -L/usr/local/lib -L/usr/lib -lfortran-lua53 -llua-5.3 -m64
 fibonacci_FCFLAGS=-I/usr/local/include -I/usr/include -m64
-fibonacci_FCLDFLAGS=-Lbuild -L/usr/local/lib -L/usr/lib -lfortran-lua53 -llua-5.3 -m64
+fibonacci_FCLDFLAGS=-L/usr/home/philipp/Programmieren/Fortran/fortran-lua53 -L/usr/local/lib -L/usr/lib -lfortran-lua53 -llua-5.3 -m64
 fortran-lua53_FCFLAGS=-I/usr/local/include -I/usr/include -m64
 fortran-lua53_ARFLAGS=-cr
 library_FCFLAGS=-I/usr/local/include -I/usr/include -m64 -fPIC
@@ -31,44 +31,44 @@ all:  string fibonacci fortran-lua53 library
 
 .PHONY: default all  string fibonacci fortran-lua53 library
 
-string: build/string
-build/string: build/libfortran-lua53.a build/.objs/string/bsd/x86_64/release/examples/string/string.f90.o
+string: examples/string/string
+examples/string/string: /usr/home/philipp/Programmieren/Fortran/fortran-lua53/libfortran-lua53.a build/.objs/string/bsd/x86_64/release/examples/string/string.f90.o
 	@echo linking.release string
-	@mkdir -p build
-	@$(FCLD) -o build/string build/.objs/string/bsd/x86_64/release/examples/string/string.f90.o $(string_FCLDFLAGS) > build/.build.log 2>&1
+	@mkdir -p examples/string
+	@$(FCLD) -o examples/string/string build/.objs/string/bsd/x86_64/release/examples/string/string.f90.o $(string_FCLDFLAGS) > build/.build.log 2>&1
 
 build/.objs/string/bsd/x86_64/release/examples/string/string.f90.o: examples/string/string.f90
 	@echo compiling.release examples/string/string.f90
 	@mkdir -p build/.objs/string/bsd/x86_64/release/examples/string
 	@$(FC) -c $(string_FCFLAGS) -o build/.objs/string/bsd/x86_64/release/examples/string/string.f90.o examples/string/string.f90 > build/.build.log 2>&1
 
-fibonacci: build/fibonacci
-build/fibonacci: build/libfortran-lua53.a build/.objs/fibonacci/bsd/x86_64/release/examples/fibonacci/example.f90.o
+fibonacci: examples/fibonacci/fibonacci
+examples/fibonacci/fibonacci: /usr/home/philipp/Programmieren/Fortran/fortran-lua53/libfortran-lua53.a build/.objs/fibonacci/bsd/x86_64/release/examples/fibonacci/example.f90.o
 	@echo linking.release fibonacci
-	@mkdir -p build
-	@$(FCLD) -o build/fibonacci build/.objs/fibonacci/bsd/x86_64/release/examples/fibonacci/example.f90.o $(fibonacci_FCLDFLAGS) > build/.build.log 2>&1
+	@mkdir -p examples/fibonacci
+	@$(FCLD) -o examples/fibonacci/fibonacci build/.objs/fibonacci/bsd/x86_64/release/examples/fibonacci/example.f90.o $(fibonacci_FCLDFLAGS) > build/.build.log 2>&1
 
 build/.objs/fibonacci/bsd/x86_64/release/examples/fibonacci/example.f90.o: examples/fibonacci/example.f90
 	@echo compiling.release examples/fibonacci/example.f90
 	@mkdir -p build/.objs/fibonacci/bsd/x86_64/release/examples/fibonacci
 	@$(FC) -c $(fibonacci_FCFLAGS) -o build/.objs/fibonacci/bsd/x86_64/release/examples/fibonacci/example.f90.o examples/fibonacci/example.f90 > build/.build.log 2>&1
 
-fortran-lua53: build/libfortran-lua53.a
-build/libfortran-lua53.a: build/.objs/fortran-lua53/bsd/x86_64/release/src/lua.f90.o
+fortran-lua53: /usr/home/philipp/Programmieren/Fortran/fortran-lua53/libfortran-lua53.a
+/usr/home/philipp/Programmieren/Fortran/fortran-lua53/libfortran-lua53.a: build/.objs/fortran-lua53/bsd/x86_64/release/src/lua.f90.o
 	@echo linking.release libfortran-lua53.a
-	@mkdir -p build
-	@$(AR) $(fortran-lua53_ARFLAGS) build/libfortran-lua53.a build/.objs/fortran-lua53/bsd/x86_64/release/src/lua.f90.o > build/.build.log 2>&1
+	@mkdir -p /usr/home/philipp/Programmieren/Fortran/fortran-lua53
+	@$(AR) $(fortran-lua53_ARFLAGS) /usr/home/philipp/Programmieren/Fortran/fortran-lua53/libfortran-lua53.a build/.objs/fortran-lua53/bsd/x86_64/release/src/lua.f90.o > build/.build.log 2>&1
 
 build/.objs/fortran-lua53/bsd/x86_64/release/src/lua.f90.o: src/lua.f90
 	@echo compiling.release src/lua.f90
 	@mkdir -p build/.objs/fortran-lua53/bsd/x86_64/release/src
 	@$(FC) -c $(fortran-lua53_FCFLAGS) -o build/.objs/fortran-lua53/bsd/x86_64/release/src/lua.f90.o src/lua.f90 > build/.build.log 2>&1
 
-library: build/fortran.so
-build/fortran.so: build/.objs/library/bsd/x86_64/release/src/lua.f90.o build/.objs/library/bsd/x86_64/release/examples/library/fortran.f90.o
+library: examples/library/fortran.so
+examples/library/fortran.so: build/.objs/library/bsd/x86_64/release/src/lua.f90.o build/.objs/library/bsd/x86_64/release/examples/library/fortran.f90.o
 	@echo linking.release fortran.so
-	@mkdir -p build
-	@$(FCSH) -o build/fortran.so build/.objs/library/bsd/x86_64/release/src/lua.f90.o build/.objs/library/bsd/x86_64/release/examples/library/fortran.f90.o $(library_FCSHFLAGS) > build/.build.log 2>&1
+	@mkdir -p examples/library
+	@$(FCSH) -o examples/library/fortran.so build/.objs/library/bsd/x86_64/release/src/lua.f90.o build/.objs/library/bsd/x86_64/release/examples/library/fortran.f90.o $(library_FCSHFLAGS) > build/.build.log 2>&1
 
 build/.objs/library/bsd/x86_64/release/src/lua.f90.o: src/lua.f90
 	@echo compiling.release src/lua.f90
