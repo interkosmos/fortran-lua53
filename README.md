@@ -19,11 +19,11 @@ Install Lua 5.3 with development headers. On FreeBSD, run:
 Use [xmake](https://github.com/xmake-io/xmake) to build fortran-lua53:
 
 ```
-$ xmake -j1
+$ xmake
 ```
 
-Link your Fortran applications statically against `liblua-5.3.a` or dynamically
-with `-llua-5.3`.
+Link your Fortran applications statically against `libfortran-lua53.a` and
+`liblua-5.3.a`.
 
 ## Example
 The following basic example shows how to call the Lua function `hello()` in
@@ -62,9 +62,8 @@ end program main
 Compile, (dynamically) link, and run the example with:
 
 ```
-$ gfortran -c src/lua.f90
 $ gfortran -I/usr/local/include/lua53/ -L/usr/local/lib/lua/5.3/ \
-  -o example example.f90 lua.o -llua-5.3
+  -o example example.f90 libfortran-lua53.a -llua-5.3
 $ ./example
 Hello from Lua!
 ```
@@ -73,7 +72,7 @@ On Linux, change the prefix `/usr/local` to `/usr`. To link Lua 5.3 statically,
 run instead:
 
 ```
-$ gfortran -o example example.f90 lua.o /usr/local/lib/liblua-5.3.a
+$ gfortran -o example example.f90 libfortran-lua53.a /usr/local/lib/liblua-5.3.a
 ```
 
 ## Further Examples
