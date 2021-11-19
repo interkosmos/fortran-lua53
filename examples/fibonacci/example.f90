@@ -18,7 +18,7 @@ program main
     rc = lual_dofile(l, 'fibonacci.lua')
     rc = lua_getglobal(l, 'fib')
 
-    if (lua_isfunction(l, -1)) then
+    if (lua_isfunction(l, -1) == 1) then
         call lua_pushinteger(l, x)
         rc = lua_pcall(l, nargs, nresults, 0)
 

@@ -513,7 +513,7 @@ contains
             sz = c_strlen(c_str)
         end if
 
-        if (sz <= 0) return
+        if (sz < 0) return
         call c_f_pointer(c_str, ptrs, [ sz ])
         allocate (character(len=sz) :: f_str)
         f_str = copy(ptrs)
@@ -535,12 +535,12 @@ contains
         !! boolean.
         type(c_ptr), intent(in) :: l
         integer,     intent(in) :: idx
-        logical                 :: lua_isboolean
+        integer                 :: lua_isboolean
 
-        lua_isboolean = .false.
+        lua_isboolean = 0
 
         if (lua_type(l, idx) == LUA_TBOOLEAN) &
-            lua_isboolean= .true.
+            lua_isboolean= 1
     end function lua_isboolean
 
     ! int lua_isfunction(lua_State *L, int index)
@@ -549,12 +549,12 @@ contains
         !! function.
         type(c_ptr), intent(in) :: l
         integer,     intent(in) :: idx
-        logical                 :: lua_isfunction
+        integer                 :: lua_isfunction
 
-        lua_isfunction = .false.
+        lua_isfunction = 0
 
         if (lua_type(l, idx) == LUA_TFUNCTION) &
-            lua_isfunction = .true.
+            lua_isfunction = 1
     end function lua_isfunction
 
     ! int lua_islightuserdata(lua_State *L, int index)
@@ -563,12 +563,12 @@ contains
         !! light user data.
         type(c_ptr), intent(in) :: l
         integer,     intent(in) :: idx
-        logical                 :: lua_islightuserdata
+        integer                 :: lua_islightuserdata
 
-        lua_islightuserdata = .false.
+        lua_islightuserdata = 0
 
         if (lua_type(l, idx) == LUA_TLIGHTUSERDATA) &
-            lua_islightuserdata = .true.
+            lua_islightuserdata = 1
     end function lua_islightuserdata
 
     ! int lua_isnil(lua_State *L, int index)
@@ -577,12 +577,12 @@ contains
         !! nil.
         type(c_ptr), intent(in) :: l
         integer,     intent(in) :: idx
-        logical                 :: lua_isnil
+        integer                 :: lua_isnil
 
-        lua_isnil = .false.
+        lua_isnil = 0
 
         if (lua_type(l, idx) == LUA_TNIL) &
-            lua_isnil = .true.
+            lua_isnil = 1
     end function lua_isnil
 
     ! int lua_isnone(lua_State *L, int index)
@@ -591,12 +591,12 @@ contains
         !! none.
         type(c_ptr), intent(in) :: l
         integer,     intent(in) :: idx
-        logical                 :: lua_isnone
+        integer                 :: lua_isnone
 
-        lua_isnone = .false.
+        lua_isnone = 0
 
         if (lua_type(l, idx) == LUA_TNONE) &
-            lua_isnone = .true.
+            lua_isnone = 1
     end function lua_isnone
 
     ! int lua_isnoneornil(lua_State *L, int index)
@@ -605,12 +605,12 @@ contains
         !! none or nil.
         type(c_ptr), intent(in) :: l
         integer,     intent(in) :: idx
-        logical                 :: lua_isnoneornil
+        integer                 :: lua_isnoneornil
 
-        lua_isnoneornil = .false.
+        lua_isnoneornil = 0
 
         if (lua_type(l, idx) <= 0) &
-            lua_isnoneornil = .true.
+            lua_isnoneornil = 1
     end function lua_isnoneornil
 
     ! int lua_istable(lua_State *L, int index)
@@ -619,12 +619,12 @@ contains
         !! table.
         type(c_ptr), intent(in) :: l
         integer,     intent(in) :: idx
-        logical                 :: lua_istable
+        integer                 :: lua_istable
 
-        lua_istable = .false.
+        lua_istable = 0
 
         if (lua_type(l, idx) == LUA_TTABLE) &
-            lua_istable = .true.
+            lua_istable = 1
     end function lua_istable
 
     ! int lua_isthread(lua_State *L, int index)
@@ -633,12 +633,12 @@ contains
         !! thread.
         type(c_ptr), intent(in) :: l
         integer,     intent(in) :: idx
-        logical                 :: lua_isthread
+        integer                 :: lua_isthread
 
-        lua_isthread = .false.
+        lua_isthread = 0
 
         if (lua_type(l, idx) == LUA_TTHREAD) &
-            lua_isthread = .true.
+            lua_isthread = 1
     end function lua_isthread
 
     ! int lua_pcall(lua_State *L, int nargs, int nresults, int msgh)

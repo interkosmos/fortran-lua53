@@ -10,12 +10,12 @@ program main
     type(c_ptr)  :: ptr
 
     l = lual_newstate()              ! Create Lua state.
-    call lual_openlibs(l)            ! Open Lua standard libary.
+    call lual_openlibs(l)            ! Open Lua standard library.
     rc = lual_dofile(l, 'table.lua') ! Open Lua file.
     rc = lua_pcall(l, 0, 0, 0)       ! Run the script once.
     rc = lua_getglobal(l, 'a')       ! Get the table.
 
-    if (lua_istable(l, -1)) then
+    if (lua_istable(l, -1) == 1) then
         ! Get table field.
         rc = lua_getfield(l, -1, 'pi')
 
@@ -39,4 +39,3 @@ program main
 
     call lua_close(l)
 end program main
-
