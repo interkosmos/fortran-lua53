@@ -166,13 +166,13 @@ module lua
         end function lua_gc
 
         ! int lua_getfield(lua_State *L, int idx, const char *k)
-        function lua_getfield(l, idx, k) bind(c, name='lua_getfield')
+        function lua_getfield_(l, idx, k) bind(c, name='lua_getfield')
             import :: c_char, c_int, c_ptr
             type(c_ptr),            intent(in), value :: l
             integer(kind=c_int),    intent(in), value :: idx
             character(kind=c_char), intent(in)        :: k
-            integer(kind=c_int)                       :: lua_getfield
-        end function lua_getfield
+            integer(kind=c_int)                       :: lua_getfield_
+        end function lua_getfield_
 
         ! int lua_getglobal(lua_State *L, const char *name)
         function lua_getglobal_(l, name) bind(c, name='lua_getglobal')
@@ -518,6 +518,17 @@ contains
         allocate (character(len=sz) :: f_str)
         f_str = copy(ptrs)
     end subroutine c_f_str_ptr
+
+    ! int lua_getfield(lua_State *L, int idx, const char *k)
+    function lua_getfield(l, idx, k)
+        !! Wrapper for `lua_getfield_()` that null-terminates string `k`.
+        type(c_ptr),      intent(in) :: l
+        integer,          intent(in) :: idx
+        character(len=*), intent(in) :: k
+        integer                      :: lua_getfield
+
+        lua_getfield = lua_getfield_(l, idx, k // c_null_char)
+    end function lua_getfield
 
     ! int lua_getglobal(lua_State *L, const char *name)
     function lua_getglobal(l, name)
