@@ -22,10 +22,11 @@ Use [xmake](https://github.com/xmake-io/xmake) to build *fortran-lua53*:
 $ xmake
 ```
 
-Or, instead, just compile the library manually:
+This outputs `libfortran-lua53.a` and `lua.mod` to `build/`. Without xmake, just
+compile the library manually:
 
 ```
-$ gfortran -c src/lua.f90
+$ gfortran -fPIC -c src/lua.f90
 $ ar rcs libfortran-lua53.a lua.o
 ```
 
@@ -88,6 +89,7 @@ Additional examples can be found in `examples/`.
 * **fibonacci:** calls a recursive Lua routine loaded from file.
 * **library:** calls a Fortran routine inside a shared library from Lua.
 * **string:** runs Lua code stored in a Fortran string.
+* **table:** reads values from a Lua table.
 
 ## Coverage
 | Function Name           | Fortran Interface Name  | Bound |
@@ -102,6 +104,7 @@ Additional examples can be found in `examples/`.
 | `lua_copy`              | `lua_copy`              |   ✓   |
 | `lua_createtable`       | `lua_createtable`       |   ✓   |
 | `lua_gc`                | `lua_gc`                |   ✓   |
+| `lua_getfield`          | `lua_getfield`          |   ✓   |
 | `lua_getglobal`         | `lua_getglobal`         |   ✓   |
 | `lua_gettop`            | `lua_gettop`            |   ✓   |
 | `lua_isboolean`         | `lua_isboolean`         |   ✓   |
@@ -138,6 +141,10 @@ Additional examples can be found in `examples/`.
 | `lua_setglobal`         | `lua_setglobal`         |   ✓   |
 | `lua_settop`            | `lua_settop`            |   ✓   |
 | `lua_status`            | `lua_status`            |   ✓   |
+| `lua_tointeger`         | `lua_tointeger`         |   ✓   |
+| `lua_tointegerx`        | `lua_tointegerx`        |   ✓   |
+| `lua_tonumber`          | `lua_tonumber`          |   ✓   |
+| `lua_tonumberx`         | `lua_tonumberx`         |   ✓   |
 | `lua_tostring`          | `lua_tostring`          |   ✓   |
 | `lua_type`              | `lua_type`              |   ✓   |
 | `lua_typename`          | `lua_typename`          |   ✓   |

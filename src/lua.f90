@@ -9,6 +9,9 @@ module lua
     implicit none
     private
 
+    integer, parameter, public :: lua_integer = c_int
+    integer, parameter, public :: lua_number  = c_double
+
     public :: lua_arith
     public :: lua_call
     public :: lua_callk
@@ -19,7 +22,9 @@ module lua
     public :: lua_copy
     public :: lua_createtable
     public :: lua_gc
+    public :: lua_getfield
     public :: lua_getglobal
+    public :: lua_gettable
     public :: lua_gettop
     public :: lua_isboolean
     public :: lua_iscfunction
@@ -55,6 +60,8 @@ module lua
     public :: lua_status
     public :: lua_tointeger
     public :: lua_tointegerx
+    public :: lua_tonumber
+    public :: lua_tonumberx
     public :: lua_tostring
     public :: lua_type
     public :: lua_typename
@@ -158,6 +165,15 @@ module lua
             integer(kind=c_int)                    :: lua_gc
         end function lua_gc
 
+        ! int lua_getfield(lua_State *L, int idx, const char *k)
+        function lua_getfield(l, idx, k) bind(c, name='lua_getfield')
+            import :: c_char, c_int, c_ptr
+            type(c_ptr),            intent(in), value :: l
+            integer(kind=c_int),    intent(in), value :: idx
+            character(kind=c_char), intent(in)        :: k
+            integer(kind=c_int)                       :: lua_getfield
+        end function lua_getfield
+
         ! int lua_getglobal(lua_State *L, const char *name)
         function lua_getglobal_(l, name) bind(c, name='lua_getglobal')
             import :: c_char, c_int, c_ptr
@@ -165,6 +181,14 @@ module lua
             character(kind=c_char), intent(in)        :: name
             integer(kind=c_int)                       :: lua_getglobal_
         end function lua_getglobal_
+
+        ! int lua_gettable (lua_State *L, int idx)
+        function lua_gettable(l, idx) bind(c, name='lua_gettable')
+            import :: c_int, c_ptr
+            type(c_ptr),         intent(in), value :: l
+            integer(kind=c_int), intent(in), value :: idx
+            integer(kind=c_int)                    :: lua_gettable
+        end function lua_gettable
 
         ! int lua_gettop(lua_State *L)
         function lua_gettop(l) bind(c, name='lua_gettop')
@@ -240,12 +264,21 @@ module lua
 
         ! lua_Integer lua_tointegerx(lua_State *L, int idx, int *isnum)
         function lua_tointegerx(l, idx, isnum) bind(c, name='lua_tointegerx')
-            import :: c_int, c_ptr
+            import :: c_int, c_ptr, lua_integer
             type(c_ptr),         intent(in), value :: l
             integer(kind=c_int), intent(in), value :: idx
             type(c_ptr),         intent(in), value :: isnum
-            integer(kind=c_int)                    :: lua_tointegerx
+            integer(kind=lua_integer)              :: lua_tointegerx
         end function lua_tointegerx
+
+        ! float lua_tonumberx(lua_State *L, int idx, int *isnum)
+        function lua_tonumberx(l, idx, isnum) bind(c, name='lua_tonumberx')
+            import :: c_int, c_ptr, lua_number
+            type(c_ptr),         intent(in), value :: l
+            integer(kind=c_int), intent(in), value :: idx
+            type(c_ptr),         intent(in), value :: isnum
+            real(kind=lua_number)                  :: lua_tonumberx
+        end function lua_tonumberx
 
         ! const char *lua_tolstring(lua_State *L, int idx, size_t *len)
         function lua_tolstring(l, idx, len) bind(c, name='lua_tolstring')
@@ -420,9 +453,9 @@ module lua
 
         ! void lua_pushnumber(lua_State *L, lua_Number n)
         subroutine lua_pushnumber(l, n) bind(c, name='lua_pushnumber')
-            import :: c_float, c_ptr
-            type(c_ptr),        intent(in), value :: l
-            real(kind=c_float), intent(in), value :: n
+            import :: c_ptr, lua_number
+            type(c_ptr),           intent(in), value :: l
+            real(kind=lua_number), intent(in), value :: n
         end subroutine lua_pushnumber
 
         ! void  lua_pushvalue(lua_State *L, int idx)
@@ -453,6 +486,39 @@ module lua
         end subroutine lual_openlibs
     end interface
 contains
+    pure function copy(a)
+        character, intent(in)  :: a(:)
+        character(len=size(a)) :: copy
+        integer(kind=8)        :: i
+
+        do i = 1, size(a)
+            copy(i:i) = a(i)
+        end do
+    end function copy
+
+    subroutine c_f_str_ptr(c_str, f_str, size)
+        !! Utility routine that copies a C string, passed as a C pointer, to a
+        !! Fortran string.
+        type(c_ptr),                   intent(in)           :: c_str
+        character(len=:), allocatable, intent(out)          :: f_str
+        integer(kind=8),               intent(in), optional :: size
+        character(kind=c_char), pointer                     :: ptrs(:)
+        integer(kind=8)                                     :: sz
+
+        if (.not. c_associated(c_str)) return
+
+        if (present(size)) then
+            sz = size
+        else
+            sz = c_strlen(c_str)
+        end if
+
+        if (sz <= 0) return
+        call c_f_pointer(c_str, ptrs, [ sz ])
+        allocate (character(len=sz) :: f_str)
+        f_str = copy(ptrs)
+    end subroutine c_f_str_ptr
+
     ! int lua_getglobal(lua_State *L, const char *name)
     function lua_getglobal(l, name)
         !! Wrapper for `lua_getglobal_()` that null-terminates string `name`.
@@ -522,7 +588,7 @@ contains
     ! int lua_isnone(lua_State *L, int index)
     function lua_isnone(l, idx)
         !! Macro replacement that returns whether the stack variable is
-        !! nil.
+        !! none.
         type(c_ptr), intent(in) :: l
         integer,     intent(in) :: idx
         logical                 :: lua_isnone
@@ -589,12 +655,21 @@ contains
 
     ! lua_Integer lua_tointeger(lua_State *l, int idx)
     function lua_tointeger(l, idx)
-        type(c_ptr), intent(in) :: l
-        integer,     intent(in) :: idx
-        integer                 :: lua_tointeger
+        type(c_ptr), intent(in)   :: l
+        integer,     intent(in)   :: idx
+        integer(kind=lua_integer) :: lua_tointeger
 
         lua_tointeger = lua_tointegerx(l, idx, c_null_ptr)
     end function lua_tointeger
+
+    ! lua_Number lua_tonumber(lua_State *l, int idx)
+    function lua_tonumber(l, idx)
+        type(c_ptr), intent(in) :: l
+        integer,     intent(in) :: idx
+        real(kind=lua_number)   :: lua_tonumber
+
+        lua_tonumber = lua_tonumberx(l, idx, c_null_ptr)
+    end function lua_tonumber
 
     ! const char *lua_tostring(lua_State *L, int index)
     function lua_tostring(l, i)
@@ -608,10 +683,7 @@ contains
 
         ptr = lua_tolstring(l, i, c_null_ptr)
         if (.not. c_associated(ptr)) return
-
-        size = c_strlen(ptr)
-        allocate (character(len=size) :: lua_tostring)
-        call c_f_string_ptr(ptr, lua_tostring)
+        call c_f_str_ptr(ptr, lua_tostring)
     end function lua_tostring
 
     ! const char *lua_typename(lua_State *L, int tp)
@@ -626,10 +698,7 @@ contains
 
         ptr = lua_typename_(l, tp)
         if (.not. c_associated(ptr)) return
-
-        size = c_strlen(ptr)
-        allocate (character(len=size) :: lua_typename)
-        call c_f_string_ptr(ptr, lua_typename)
+        call c_f_str_ptr(ptr, lua_typename)
     end function lua_typename
 
     ! int luaL_dofile(lua_State *L, const char *filename)
@@ -700,29 +769,4 @@ contains
         call lua_pushcfunction(l, f)
         call lua_setglobal(l, n // c_null_char)
     end subroutine lua_register
-
-    subroutine c_f_string_ptr(c_string, f_string)
-        !! Utility routine that copies a C string, passed as a C pointer, to a
-        !! Fortran string.
-        type(c_ptr),      intent(in)           :: c_string
-        character(len=*), intent(out)          :: f_string
-        character(kind=c_char, len=1), pointer :: char_ptrs(:)
-        integer                                :: i
-
-        if (.not. c_associated(c_string)) then
-            f_string = ' '
-        else
-            call c_f_pointer(c_string, char_ptrs, [huge(0)])
-
-            i = 1
-
-            do while (char_ptrs(i) /= c_null_char .and. i <= len(f_string))
-                f_string(i:i) = char_ptrs(i)
-                i = i + 1
-            end do
-
-            if (i < len(f_string)) &
-                f_string(i:) = ' '
-        end if
-    end subroutine c_f_string_ptr
 end module lua
