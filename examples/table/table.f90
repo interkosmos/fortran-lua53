@@ -7,7 +7,6 @@ program main
     integer      :: rc
     real(kind=8) :: pi
     type(c_ptr)  :: l
-    type(c_ptr)  :: ptr
 
     l = lual_newstate()              ! Create Lua state.
     call lual_openlibs(l)            ! Open Lua standard library.
