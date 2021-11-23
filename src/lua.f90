@@ -72,6 +72,9 @@ module lua
     public :: lual_newstate
     public :: lual_openlibs
 
+    private :: c_f_str_ptr
+    private :: copy
+
     ! Option for multiple returns in `lua_pcall()` and `lua_call()`.
     integer(kind=c_int), parameter, public :: LUA_MULTRET = -1
 
@@ -496,29 +499,6 @@ contains
         end do
     end function copy
 
-    subroutine c_f_str_ptr(c_str, f_str, size)
-        !! Utility routine that copies a C string, passed as a C pointer, to a
-        !! Fortran string.
-        type(c_ptr),                   intent(in)           :: c_str
-        character(len=:), allocatable, intent(out)          :: f_str
-        integer(kind=8),               intent(in), optional :: size
-        character(kind=c_char), pointer                     :: ptrs(:)
-        integer(kind=8)                                     :: sz
-
-        if (.not. c_associated(c_str)) return
-
-        if (present(size)) then
-            sz = size
-        else
-            sz = c_strlen(c_str)
-        end if
-
-        if (sz < 0) return
-        call c_f_pointer(c_str, ptrs, [ sz ])
-        allocate (character(len=sz) :: f_str)
-        f_str = copy(ptrs)
-    end subroutine c_f_str_ptr
-
     ! int lua_getfield(lua_State *L, int idx, const char *k)
     function lua_getfield(l, idx, k)
         !! Wrapper for `lua_getfield_()` that null-terminates string `k`.
@@ -745,6 +725,29 @@ contains
 
         lual_loadstring = lual_loadstring_(l, s // c_null_char)
     end function lual_loadstring
+
+    subroutine c_f_str_ptr(c_str, f_str, size)
+        !! Utility routine that copies a C string, passed as a C pointer, to a
+        !! Fortran string.
+        type(c_ptr),                   intent(in)           :: c_str
+        character(len=:), allocatable, intent(out)          :: f_str
+        integer(kind=8),               intent(in), optional :: size
+        character(kind=c_char), pointer                     :: ptrs(:)
+        integer(kind=8)                                     :: sz
+
+        if (.not. c_associated(c_str)) return
+
+        if (present(size)) then
+            sz = size
+        else
+            sz = c_strlen(c_str)
+        end if
+
+        if (sz < 0) return
+        call c_f_pointer(c_str, ptrs, [ sz ])
+        allocate (character(len=sz) :: f_str)
+        f_str = copy(ptrs)
+    end subroutine c_f_str_ptr
 
     ! void lua_call(lua_State *L, int nargs, int nresults)
     subroutine lua_call(l, nargs, nresults)

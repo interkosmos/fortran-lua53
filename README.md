@@ -30,8 +30,14 @@ $ gfortran -fPIC -c src/lua.f90
 $ ar rcs libfortran-lua53.a lua.o
 ```
 
-Link your Fortran applications statically against `libfortran-lua53.a` and
-`liblua-5.3.a`.
+Or, run the Fortran Package Manager:
+
+```
+$ fpm build --profile release
+```
+
+Link your Fortran applications against `libfortran-lua53.a`, and
+`liblua-5.3.a` or `-llua53`.
 
 ## Example
 The following basic example shows how to call the Lua function `hello()` in
@@ -90,6 +96,15 @@ Additional examples can be found in `examples/`.
 * **library:** calls a Fortran routine inside a shared library from Lua.
 * **string:** runs Lua code stored in a Fortran string.
 * **table:** reads values from a Lua table.
+
+## fpm
+You can add *fortran-lua53* as an [fpm](https://github.com/fortran-lang/fpm)
+dependency:
+
+```toml
+[dependencies]
+fortran-lua53 = { git = "https://github.com/interkosmos/fortran-lua53.git" }
+```
 
 ## Coverage
 | Function Name           | Fortran Interface Name  | Bound |
