@@ -12,7 +12,7 @@ target("fortran-lua53")
 target("fibonacci")
     set_kind("binary")
     add_deps("fortran-lua53")
-    add_files("examples/fibonacci/example.f90")
+    add_files("examples/fibonacci/fibonacci.f90")
     add_syslinks("lua-5.3")
     set_targetdir("examples/fibonacci/")
 

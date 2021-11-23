@@ -670,7 +670,6 @@ contains
         integer,     intent(in)       :: i
         character(len=:), allocatable :: lua_tostring
         type(c_ptr)                   :: ptr
-        integer(kind=8)               :: size
 
         ptr = lua_tolstring(l, i, c_null_ptr)
         if (.not. c_associated(ptr)) return
@@ -685,7 +684,6 @@ contains
         integer,     intent(in)       :: tp
         character(len=:), allocatable :: lua_typename
         type(c_ptr)                   :: ptr
-        integer(kind=8)               :: size
 
         ptr = lua_typename_(l, tp)
         if (.not. c_associated(ptr)) return

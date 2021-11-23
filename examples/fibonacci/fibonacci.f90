@@ -6,12 +6,22 @@ program main
     use, intrinsic :: iso_c_binding, only: c_ptr
     use :: lua
     implicit none
+    character(len=*), parameter :: FILE_NAME = 'fibonacci.lua'
+
     type(c_ptr) :: l
-    integer     :: nargs    = 1
-    integer     :: nresults = 2
+    integer     :: nargs
+    integer     :: nresults
     integer     :: rc
-    integer     :: r1, r2   = 0
-    integer     :: x        = 10
+    integer     :: r1, r2
+    integer     :: x
+    logical     :: file_exists
+
+    inquire (file=FILE_NAME, exist=file_exists)
+    if (.not. file_exists) stop 'Error: Lua file not found'
+
+    nargs = 1
+    nresults = 2
+    x = 10
 
     l = lual_newstate()
     call lual_openlibs(l)

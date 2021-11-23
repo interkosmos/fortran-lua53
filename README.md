@@ -23,11 +23,10 @@ $ xmake
 ```
 
 This outputs `libfortran-lua53.a` and `lua.mod` to `build/`. Without xmake, just
-compile the library manually:
+compile the library using the provided `Makefile`:
 
 ```
-$ gfortran -fPIC -c src/lua.f90
-$ ar rcs libfortran-lua53.a lua.o
+$ make
 ```
 
 Or, run the Fortran Package Manager:
