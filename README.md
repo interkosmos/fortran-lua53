@@ -160,11 +160,18 @@ fortran-lua53 = { git = "https://github.com/interkosmos/fortran-lua53.git" }
 | `lua_pushvalue`         | `lua_pushvalue`         |   ✓   |
 | `lua_pushvfstring`      |                         |       |
 | `lua_register`          | `lua_register`          |   ✓   |
+| `lua_rawget`            | `lua_rawget`            |   ✓   |
+| `lua_rawgeti`           | `lua_rawgeti`           |   ✓   |
+| `lua_rawlen`            | `lua_rawlen`            |   ✓   |
+| `lua_rawset`            | `lua_rawset`            |   ✓   |
+| `lua_rawseti`           | `lua_rawseti`           |   ✓   |
 | `lua_setglobal`         | `lua_setglobal`         |   ✓   |
 | `lua_settop`            | `lua_settop`            |   ✓   |
 | `lua_status`            | `lua_status`            |   ✓   |
 | `lua_tointeger`         | `lua_tointeger`         |   ✓   |
 | `lua_tointegerx`        | `lua_tointegerx`        |   ✓   |
+| `lua_toboolean`         | `lua_toboolean`         |   ✓   |
+| `lua_tobooleanx`        | `lua_tobooleanx`        |   ✓   |
 | `lua_tonumber`          | `lua_tonumber`          |   ✓   |
 | `lua_tonumberx`         | `lua_tonumberx`         |   ✓   |
 | `lua_tostring`          | `lua_tostring`          |   ✓   |

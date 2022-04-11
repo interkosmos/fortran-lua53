@@ -5,7 +5,7 @@ program main
     use, intrinsic :: iso_fortran_env, only: r8 => real64
     use :: lua
     implicit none
-    integer       :: rc
+    integer       :: i, rc
     real(kind=r8) :: pi
     type(c_ptr)   :: l
 
@@ -35,6 +35,41 @@ program main
         end if
 
         call lua_pop(l, 1)
+    end if
+
+    ! Get the numerical table.
+    rc = lua_getglobal(l, 'i')
+
+    if (lua_istable(l, -1) == 1) then
+        ! Get table value.
+        do i = 1, 3
+            call lua_pushnumber(l, real(i, 8))
+            rc = lua_rawget(l, -2)
+
+            if (lua_isnumber(l, -1) == 1) then
+                print '("i: ", i4)', lua_tointeger(l, -1)
+            end if
+
+            call lua_pop(l, 1)
+        end do
+    end if
+
+    ! Get the numerical table.
+    rc = lua_getglobal(l, 'i')
+
+    if (lua_istable(l, -1) == 1) then
+        ! Get table value.
+        print '("table length: ", i0)', lua_rawlen(l, -1)
+
+        do i = 1, 3
+            rc = lua_rawgeti(l, -1, i)
+
+            if (lua_isnumber(l, -1) == 1) then
+                print '("i: ", i4)', lua_tointeger(l, -1)
+            end if
+
+            call lua_pop(l, 1)
+        end do
     end if
 
     call lua_close(l)

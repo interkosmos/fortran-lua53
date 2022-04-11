@@ -55,12 +55,19 @@ module lua
     public :: lua_pushstring
     public :: lua_pushthread
     public :: lua_pushvalue
+    public :: lua_rawget
+    public :: lua_rawgeti
+    public :: lua_rawlen
+    public :: lua_rawset
+    public :: lua_rawseti
     public :: lua_register
     public :: lua_setglobal
     public :: lua_settop
     public :: lua_status
     public :: lua_tointeger
     public :: lua_tointegerx
+    public :: lua_toboolean
+    public :: lua_tobooleanx
     public :: lua_tonumber
     public :: lua_tonumberx
     public :: lua_tostring
@@ -274,6 +281,31 @@ module lua
             integer(kind=c_int)                       :: lua_load
         end function lua_load
 
+        ! int lua_rawget(lua_State *L, int idx)
+        function lua_rawget(l, idx) bind(c, name='lua_rawget')
+            import :: c_int, c_ptr
+            type(c_ptr),         intent(in), value :: l
+            integer(kind=c_int), intent(in), value :: idx
+            integer(kind=c_int)                    :: lua_rawget
+        end function lua_rawget
+
+        ! int lua_rawgeti(lua_State *L, int idx, lua_Integer n)
+        function lua_rawgeti(l, idx, n) bind(c, name='lua_rawgeti')
+            import :: c_int, c_ptr, lua_integer
+            type(c_ptr),               intent(in), value :: l
+            integer(kind=c_int),       intent(in), value :: idx
+            integer(kind=lua_integer), intent(in), value :: n
+            integer(kind=c_int)                          :: lua_rawgeti
+        end function lua_rawgeti
+
+        ! size_t lua_rawlen(lua_State *L, int idx)
+        function lua_rawlen(l, idx) bind(c, name='lua_rawlen')
+            import :: c_int, c_ptr, c_size_t
+            type(c_ptr),         intent(in), value :: l
+            integer(kind=c_int), intent(in), value :: idx
+            integer(kind=c_size_t)                 :: lua_rawlen
+        end function lua_rawlen
+
         ! int lua_status(lua_State *L)
         function lua_status(l) bind(c, name='lua_status')
             import :: c_int, c_ptr
@@ -291,6 +323,14 @@ module lua
             type(c_ptr),         intent(in), value :: isnum
             integer(kind=lua_integer)              :: lua_tointegerx
         end function lua_tointegerx
+
+        ! int lua_toboolean(lua_State *L, int idx)
+        function lua_tobooleanx(l, idx) bind(c, name='lua_toboolean')
+            import :: c_int, c_ptr
+            type(c_ptr),         intent(in), value :: l
+            integer(kind=c_int), intent(in), value :: idx
+            integer(kind=c_int)                    :: lua_tobooleanx
+        end function lua_tobooleanx
 
         ! float lua_tonumberx(lua_State *L, int idx, int *isnum)
         function lua_tonumberx(l, idx, isnum) bind(c, name='lua_tonumberx')
@@ -511,6 +551,21 @@ module lua
             integer(kind=c_int), intent(in), value :: idx
         end subroutine lua_pushvalue
 
+        ! void lua_rawset(lua_State *L, int idx)
+        subroutine lua_rawset(l, idx) bind(c, name='lua_rawset')
+            import :: c_int, c_ptr, lua_integer
+            type(c_ptr),         intent(in), value :: l
+            integer(kind=c_int), intent(in), value :: idx
+        end subroutine lua_rawset
+
+        ! void lua_rawseti(lua_State *L, int idx, lua_Integer n)
+        subroutine lua_rawseti(l, idx, n) bind(c, name='lua_rawseti')
+            import :: c_int, c_ptr, lua_integer
+            type(c_ptr),               intent(in), value :: l
+            integer(kind=c_int),       intent(in), value :: idx
+            integer(kind=lua_integer), intent(in), value :: n
+        end subroutine lua_rawseti
+
         ! void lua_setglobal(lua_State *L, const char *name)
         subroutine lua_setglobal(l, name) bind(c, name='lua_setglobal')
             import :: c_char, c_ptr
@@ -687,7 +742,7 @@ contains
         integer,     intent(in) :: msgh
         integer                 :: lua_pcall
 
-        lua_pcall = lua_pcallk(l, nargs, nresults, msgh, int(0, kind=i8), c_null_ptr)
+        lua_pcall = lua_pcallk(l, nargs, nresults, msgh, int(0, kind=i8), c_null_funptr)
     end function lua_pcall
 
     ! lua_Integer lua_tointeger(lua_State *l, int idx)
@@ -698,6 +753,19 @@ contains
 
         lua_tointeger = lua_tointegerx(l, idx, c_null_ptr)
     end function lua_tointeger
+
+    ! logical lua_toboolean(lua_State *L, int index)
+    function lua_toboolean(l, idx)
+        type(c_ptr), intent(in) :: l
+        integer,     intent(in) :: idx
+        logical                 :: lua_toboolean
+
+        if (lua_tobooleanx(l, idx) == 0) then
+            lua_toboolean = .false.
+        else
+            lua_toboolean = .true.
+        end if
+    end function lua_toboolean
 
     ! lua_Number lua_tonumber(lua_State *l, int idx)
     function lua_tonumber(l, idx)
@@ -799,7 +867,7 @@ contains
         integer,     intent(in) :: nargs
         integer,     intent(in) :: nresults
 
-        call lua_callk(l, nargs, nresults, int(0, kind=i8), c_null_ptr)
+        call lua_callk(l, nargs, nresults, int(0, kind=i8), c_null_funptr)
     end subroutine lua_call
 
     ! void lua_pop(lua_State *l, int n)
