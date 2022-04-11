@@ -64,10 +64,9 @@ module lua
     public :: lua_setglobal
     public :: lua_settop
     public :: lua_status
+    public :: lua_toboolean
     public :: lua_tointeger
     public :: lua_tointegerx
-    public :: lua_toboolean
-    public :: lua_tobooleanx
     public :: lua_tonumber
     public :: lua_tonumberx
     public :: lua_tostring
@@ -284,6 +283,7 @@ module lua
         ! int lua_rawget(lua_State *L, int idx)
         function lua_rawget(l, idx) bind(c, name='lua_rawget')
             import :: c_int, c_ptr
+            implicit none
             type(c_ptr),         intent(in), value :: l
             integer(kind=c_int), intent(in), value :: idx
             integer(kind=c_int)                    :: lua_rawget
@@ -292,6 +292,7 @@ module lua
         ! int lua_rawgeti(lua_State *L, int idx, lua_Integer n)
         function lua_rawgeti(l, idx, n) bind(c, name='lua_rawgeti')
             import :: c_int, c_ptr, lua_integer
+            implicit none
             type(c_ptr),               intent(in), value :: l
             integer(kind=c_int),       intent(in), value :: idx
             integer(kind=lua_integer), intent(in), value :: n
@@ -314,23 +315,14 @@ module lua
             integer(kind=c_int)            :: lua_status
         end function lua_status
 
-        ! lua_Integer lua_tointegerx(lua_State *L, int idx, int *isnum)
-        function lua_tointegerx(l, idx, isnum) bind(c, name='lua_tointegerx')
-            import :: c_int, c_ptr, lua_integer
+        ! int lua_toboolean(lua_State *L, int idx)
+        function lua_toboolean_(l, idx) bind(c, name='lua_toboolean')
+            import :: c_int, c_ptr
             implicit none
             type(c_ptr),         intent(in), value :: l
             integer(kind=c_int), intent(in), value :: idx
-            type(c_ptr),         intent(in), value :: isnum
-            integer(kind=lua_integer)              :: lua_tointegerx
-        end function lua_tointegerx
-
-        ! int lua_toboolean(lua_State *L, int idx)
-        function lua_tobooleanx(l, idx) bind(c, name='lua_toboolean')
-            import :: c_int, c_ptr
-            type(c_ptr),         intent(in), value :: l
-            integer(kind=c_int), intent(in), value :: idx
-            integer(kind=c_int)                    :: lua_tobooleanx
-        end function lua_tobooleanx
+            integer(kind=c_int)                    :: lua_toboolean_
+        end function lua_toboolean_
 
         ! float lua_tonumberx(lua_State *L, int idx, int *isnum)
         function lua_tonumberx(l, idx, isnum) bind(c, name='lua_tonumberx')
@@ -341,6 +333,16 @@ module lua
             type(c_ptr),         intent(in), value :: isnum
             real(kind=lua_number)                  :: lua_tonumberx
         end function lua_tonumberx
+
+        ! lua_Integer lua_tointegerx(lua_State *L, int idx, int *isnum)
+        function lua_tointegerx(l, idx, isnum) bind(c, name='lua_tointegerx')
+            import :: c_int, c_ptr, lua_integer
+            implicit none
+            type(c_ptr),         intent(in), value :: l
+            integer(kind=c_int), intent(in), value :: idx
+            type(c_ptr),         intent(in), value :: isnum
+            integer(kind=lua_integer)              :: lua_tointegerx
+        end function lua_tointegerx
 
         ! const char *lua_tolstring(lua_State *L, int idx, size_t *len)
         function lua_tolstring(l, idx, len) bind(c, name='lua_tolstring')
@@ -554,6 +556,7 @@ module lua
         ! void lua_rawset(lua_State *L, int idx)
         subroutine lua_rawset(l, idx) bind(c, name='lua_rawset')
             import :: c_int, c_ptr, lua_integer
+            implicit none
             type(c_ptr),         intent(in), value :: l
             integer(kind=c_int), intent(in), value :: idx
         end subroutine lua_rawset
@@ -561,6 +564,7 @@ module lua
         ! void lua_rawseti(lua_State *L, int idx, lua_Integer n)
         subroutine lua_rawseti(l, idx, n) bind(c, name='lua_rawseti')
             import :: c_int, c_ptr, lua_integer
+            implicit none
             type(c_ptr),               intent(in), value :: l
             integer(kind=c_int),       intent(in), value :: idx
             integer(kind=lua_integer), intent(in), value :: n
@@ -760,7 +764,7 @@ contains
         integer,     intent(in) :: idx
         logical                 :: lua_toboolean
 
-        if (lua_tobooleanx(l, idx) == 0) then
+        if (lua_toboolean_(l, idx) == 0) then
             lua_toboolean = .false.
         else
             lua_toboolean = .true.

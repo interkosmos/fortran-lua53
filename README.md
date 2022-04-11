@@ -116,6 +116,12 @@ fortran-lua53 = { git = "https://github.com/interkosmos/fortran-lua53.git" }
 ## Coverage
 | Function Name           | Fortran Interface Name  | Bound |
 |-------------------------|-------------------------|-------|
+| `luaL_dofile`           | `lual_dofile`           |   ✓   |
+| `luaL_loadfile`         | `lual_loadfile`         |   ✓   |
+| `luaL_loadfilex`        | `lual_loadfilex`        |   ✓   |
+| `luaL_loadstring`       | `lual_loadstring`       |   ✓   |
+| `luaL_newstate`         | `lual_newstate`         |   ✓   |
+| `luaL_openlibs`         | `lual_openlibs`         |   ✓   |
 | `lua_arith`             | `lua_arith`             |   ✓   |
 | `lua_call`              | `lua_call`              |   ✓   |
 | `lua_callk`             | `lua_callk`             |   ✓   |
@@ -159,30 +165,23 @@ fortran-lua53 = { git = "https://github.com/interkosmos/fortran-lua53.git" }
 | `lua_pushthread`        | `lua_pushthread`        |   ✓   |
 | `lua_pushvalue`         | `lua_pushvalue`         |   ✓   |
 | `lua_pushvfstring`      |                         |       |
-| `lua_register`          | `lua_register`          |   ✓   |
 | `lua_rawget`            | `lua_rawget`            |   ✓   |
 | `lua_rawgeti`           | `lua_rawgeti`           |   ✓   |
 | `lua_rawlen`            | `lua_rawlen`            |   ✓   |
 | `lua_rawset`            | `lua_rawset`            |   ✓   |
 | `lua_rawseti`           | `lua_rawseti`           |   ✓   |
+| `lua_register`          | `lua_register`          |   ✓   |
 | `lua_setglobal`         | `lua_setglobal`         |   ✓   |
 | `lua_settop`            | `lua_settop`            |   ✓   |
 | `lua_status`            | `lua_status`            |   ✓   |
+| `lua_toboolean`         | `lua_toboolean`         |   ✓   |
 | `lua_tointeger`         | `lua_tointeger`         |   ✓   |
 | `lua_tointegerx`        | `lua_tointegerx`        |   ✓   |
-| `lua_toboolean`         | `lua_toboolean`         |   ✓   |
-| `lua_tobooleanx`        | `lua_tobooleanx`        |   ✓   |
 | `lua_tonumber`          | `lua_tonumber`          |   ✓   |
 | `lua_tonumberx`         | `lua_tonumberx`         |   ✓   |
 | `lua_tostring`          | `lua_tostring`          |   ✓   |
 | `lua_type`              | `lua_type`              |   ✓   |
 | `lua_typename`          | `lua_typename`          |   ✓   |
-| `luaL_dofile`           | `lual_dofile`           |   ✓   |
-| `luaL_loadfile`         | `lual_loadfile`         |   ✓   |
-| `luaL_loadfilex`        | `lual_loadfilex`        |   ✓   |
-| `luaL_loadstring`       | `lual_loadstring`       |   ✓   |
-| `luaL_newstate`         | `lual_newstate`         |   ✓   |
-| `luaL_openlibs`         | `lual_openlibs`         |   ✓   |
 
 ## Licence
 ISC
