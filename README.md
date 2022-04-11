@@ -16,6 +16,12 @@ Install Lua 5.3 with development headers. On FreeBSD, run:
 # pkg install lang/lua53
 ```
 
+On Debian Linux, install:
+
+```
+# apt-get install liblua5.3 liblua5.3-dev
+```
+
 Use [xmake](https://github.com/xmake-io/xmake) to build *fortran-lua53*:
 
 ```
@@ -36,7 +42,9 @@ $ fpm build --profile release
 ```
 
 Link your Fortran applications against `libfortran-lua53.a`, and
-`liblua-5.3.a` or `-llua53`.
+`liblua-5.3.a` or `-llua53`. On Linux, you have to link against `liblua5.3.a` or
+`-llua5.3` respectively instead. The include and library search paths may differ
+as well.
 
 ## Example
 The following basic example shows how to call the Lua function `hello()` in
