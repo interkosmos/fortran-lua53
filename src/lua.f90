@@ -641,7 +641,7 @@ contains
         integer,     intent(in) :: msgh
         integer                 :: lua_pcall
 
-        lua_pcall = lua_pcallk(l, nargs, nresults, msgh, int(0, kind=8), c_null_ptr)
+        lua_pcall = lua_pcallk(l, nargs, nresults, msgh, int(0, kind=8), c_null_funptr)
     end function lua_pcall
 
     ! lua_Integer lua_tointeger(lua_State *l, int idx)
@@ -753,7 +753,7 @@ contains
         integer,     intent(in) :: nargs
         integer,     intent(in) :: nresults
 
-        call lua_callk(l, nargs, nresults, int(0, kind=8), c_null_ptr)
+        call lua_callk(l, nargs, nresults, int(0, kind=8), c_null_funptr)
     end subroutine lua_call
 
     ! void lua_pop(lua_State *l, int n)
