@@ -117,6 +117,7 @@ fortran-lua53 = { git = "https://github.com/interkosmos/fortran-lua53.git" }
 | Function Name           | Fortran Interface Name  | Bound |
 |-------------------------|-------------------------|-------|
 | `luaL_dofile`           | `lual_dofile`           |   ✓   |
+| `luaL_len`              | `lual_len`              |   ✓   |
 | `luaL_loadfile`         | `lual_loadfile`         |   ✓   |
 | `luaL_loadfilex`        | `lual_loadfilex`        |   ✓   |
 | `luaL_loadstring`       | `lual_loadstring`       |   ✓   |
