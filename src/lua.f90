@@ -73,12 +73,12 @@ module lua
     public :: lua_type
     public :: lua_typename
     public :: lual_dofile
+    public :: lual_len
     public :: lual_loadfile
     public :: lual_loadfilex
     public :: lual_loadstring
     public :: lual_newstate
     public :: lual_openlibs
-    public :: lual_len
 
     private :: c_f_str_ptr
     private :: copy
@@ -373,32 +373,6 @@ module lua
             type(c_ptr)                            :: lua_typename_
         end function lua_typename_
 
-        ! int luaL_loadfilex(lua_State *L, const char *filename, const char *mode)
-        function lual_loadfilex(l, filename, mode) bind(c, name='luaL_loadfilex')
-            import :: c_char, c_int, c_ptr
-            implicit none
-            type(c_ptr),            intent(in), value :: l
-            character(kind=c_char), intent(in)        :: filename
-            type(c_ptr),            intent(in), value :: mode
-            integer(kind=c_int)                       :: lual_loadfilex
-        end function lual_loadfilex
-
-        ! int luaL_loadstring (lua_State *L, const char *s)
-        function lual_loadstring_(l, s) bind(c, name='luaL_loadstring')
-            import :: c_char, c_int, c_ptr
-            implicit none
-            type(c_ptr),            intent(in), value :: l
-            character(kind=c_char), intent(in)        :: s
-            integer(kind=c_int)                       :: lual_loadstring_
-        end function lual_loadstring_
-
-        ! lua_State *luaL_newstate(void)
-        function lual_newstate() bind(c, name='luaL_newstate')
-            import :: c_ptr
-            implicit none
-            type(c_ptr) :: lual_newstate
-        end function lual_newstate
-
         ! int lua_pcallk(lua_State *L, int nargs, int nresults, int msgh, lua_KContext ctx, lua_KFunction k)
         function lua_pcallk(l, nargs, nresults, msgh, ctx, k) bind(c, name='lua_pcallk')
             import :: c_funptr, c_int, c_intptr_t, c_ptr
@@ -438,6 +412,41 @@ module lua
             type(c_ptr), intent(in), value :: l
             integer(kind=c_int)            :: lua_pushthread
         end function lua_pushthread
+
+        ! int luaL_len(lua_State *L, int idx)
+        function lual_len(l, idx) bind(c, name='luaL_len')
+            import :: c_int, c_ptr
+            implicit none
+            type(c_ptr),         intent(in), value :: l
+            integer(kind=c_int), intent(in), value :: idx
+            integer(kind=c_int)                    :: lual_len
+        end function lual_len
+
+        ! int luaL_loadfilex(lua_State *L, const char *filename, const char *mode)
+        function lual_loadfilex(l, filename, mode) bind(c, name='luaL_loadfilex')
+            import :: c_char, c_int, c_ptr
+            implicit none
+            type(c_ptr),            intent(in), value :: l
+            character(kind=c_char), intent(in)        :: filename
+            type(c_ptr),            intent(in), value :: mode
+            integer(kind=c_int)                       :: lual_loadfilex
+        end function lual_loadfilex
+
+        ! int luaL_loadstring(lua_State *L, const char *s)
+        function lual_loadstring_(l, s) bind(c, name='luaL_loadstring')
+            import :: c_char, c_int, c_ptr
+            implicit none
+            type(c_ptr),            intent(in), value :: l
+            character(kind=c_char), intent(in)        :: s
+            integer(kind=c_int)                       :: lual_loadstring_
+        end function lual_loadstring_
+
+        ! lua_State *luaL_newstate(void)
+        function lual_newstate() bind(c, name='luaL_newstate')
+            import :: c_ptr
+            implicit none
+            type(c_ptr) :: lual_newstate
+        end function lual_newstate
 
         ! void lua_arith(lua_State *L, int op)
         subroutine lua_arith(l, op) bind(c, name='lua_arith')
@@ -593,16 +602,6 @@ module lua
             implicit none
             type(c_ptr), intent(in), value :: l
         end subroutine lual_openlibs
-
-        ! int luaL_len(lua_State *L, int idx)
-        function lual_len(l, idx) bind(c, name='luaL_len')
-            import :: c_int, c_ptr
-            implicit none
-            type(c_ptr), intent(in), value :: l
-            integer(kind=c_int), intent(in), value :: idx
-            integer(kind=c_int)                    :: lual_len
-        end function lual_len
-
     end interface
 contains
     pure function copy(a)

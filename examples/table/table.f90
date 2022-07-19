@@ -5,7 +5,7 @@ program main
     use, intrinsic :: iso_fortran_env, only: r8 => real64
     use :: lua
     implicit none
-    integer       :: i,j, rc
+    integer       :: i, rc
     real(kind=r8) :: pi
     type(c_ptr)   :: l
 
@@ -13,7 +13,6 @@ program main
     call lual_openlibs(l)            ! Open Lua standard library.
     rc = lual_dofile(l, 'table.lua') ! Open Lua file.
     rc = lua_pcall(l, 0, 0, 0)       ! Run the script once.
-do j=1,100
     rc = lua_getglobal(l, 'a')       ! Get the table.
 
     if (lua_istable(l, -1) == 1) then
@@ -37,8 +36,8 @@ do j=1,100
 
         call lua_pop(l, 1)
     end if
-    print*,j,"get table field"
-    call lua_pop(l,-1)  !attention here
+
+    call lua_pop(l, -1)
 
     ! Get the numerical table.
     rc = lua_getglobal(l, 'i')
@@ -56,8 +55,8 @@ do j=1,100
             call lua_pop(l, 1)
         end do
     end if
-    print*,j,"get table value"
-    call lua_pop(l,-1)  !attention here
+
+    call lua_pop(l, -1)
 
     ! Get the numerical table.
     rc = lua_getglobal(l, 'i')
@@ -76,9 +75,7 @@ do j=1,100
             call lua_pop(l, 1)
         end do
     end if
-    print*,j,"get numerical table"
-    call lua_pop(l,-1)  !attention here
-    
-enddo
+
+    call lua_pop(l, -1)
     call lua_close(l)
 end program main
