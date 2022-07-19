@@ -38,7 +38,7 @@ $ make
 Or, run the Fortran Package Manager:
 
 ```
-$ fpm build --profile release
+$ fpm build --profile=release
 ```
 
 Link your Fortran applications against `libfortran-lua53.a`, and
