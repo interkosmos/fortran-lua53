@@ -78,6 +78,7 @@ module lua
     public :: lual_loadstring
     public :: lual_newstate
     public :: lual_openlibs
+    public :: lual_len
 
     private :: c_f_str_ptr
     private :: copy
@@ -592,6 +593,16 @@ module lua
             implicit none
             type(c_ptr), intent(in), value :: l
         end subroutine lual_openlibs
+
+        ! int luaL_len(lua_State *L, int idx)
+        function lual_len(l, idx) bind(c, name='luaL_len')
+            import :: c_int, c_ptr
+            implicit none
+            type(c_ptr), intent(in), value :: l
+            integer(kind=c_int), intent(in), value :: idx
+            integer(kind=c_int)                    :: lual_len
+        end function lual_len
+
     end interface
 contains
     pure function copy(a)
