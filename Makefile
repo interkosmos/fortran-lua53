@@ -2,10 +2,10 @@
 
 FC      = gfortran
 AR      = ar
-FFLAGS  = -Wall
+FFLAGS  = -Wall `pkg-config --cflags lua-5.3`
 ARFLAGS = rcs
-LDFLAGS = -I/usr/local/include/lua53/ -L/usr/local/lib/lua/5.3/
-LDLIBS  = -llua-5.3
+LDFLAGS = `pkg-config --libs-only-L lua-5.3`
+LDLIBS  = `pkg-config --libs-only-l lua-5.3`
 TARGET  = libfortran-lua53.a
 
 FIBONACCI = examples/fibonacci/fibonacci
@@ -13,9 +13,11 @@ LIBRARY   = examples/library/fortran.so
 STRING    = examples/string/string
 TABLE     = examples/table/table
 
-.PHONY: all clean
+.PHONY: all clean examples
 
-all: $(TARGET) $(FIBONACCI) $(LIBRARY) $(STRING) $(TABLE)
+all: $(TARGET)
+
+examples: $(FIBONACCI) $(LIBRARY) $(STRING) $(TABLE)
 
 $(TARGET):
 	$(FC) $(FFLAGS) -fPIC -c src/lua.f90

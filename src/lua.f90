@@ -10,9 +10,6 @@ module lua
     implicit none
     private
 
-    integer, parameter, public :: lua_integer = c_int
-    integer, parameter, public :: lua_number  = c_double
-
     public :: lua_arith
     public :: lua_call
     public :: lua_callk
@@ -82,6 +79,9 @@ module lua
 
     private :: c_f_str_ptr
     private :: copy
+
+    integer, parameter, public :: lua_integer = c_int
+    integer, parameter, public :: lua_number  = c_double
 
     ! Option for multiple returns in `lua_pcall()` and `lua_call()`.
     integer(kind=c_int), parameter, public :: LUA_MULTRET = -1
@@ -793,7 +793,7 @@ contains
     ! const char *lua_tostring(lua_State *L, int index)
     function lua_tostring(l, i)
         !! Wrapper that calls `lua_tolstring()` and converts the returned C
-        !! pointer to Fortran string.
+        !! pointer to Fortran string. Returns an unallocated character on error.
         type(c_ptr), intent(in)       :: l
         integer,     intent(in)       :: i
         character(len=:), allocatable :: lua_tostring
@@ -807,7 +807,7 @@ contains
     ! const char *lua_typename(lua_State *L, int tp)
     function lua_typename(l, tp)
         !! Wrapper that calls `lua_typename_()` and converts the returned C
-        !! pointer to Fortran string.
+        !! pointer to Fortran string. Returns an unallocated character on error.
         type(c_ptr), intent(in)       :: l
         integer,     intent(in)       :: tp
         character(len=:), allocatable :: lua_typename
