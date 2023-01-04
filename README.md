@@ -253,11 +253,11 @@ fortran-lua53 = { git = "https://github.com/interkosmos/fortran-lua53.git" }
 | `lua_resume`            |                         |       |
 | `lua_rotate`            |                         |       |
 | `lua_setallocf`         |                         |       |
-| `lua_setfield`          |                         |       |
+| `lua_setfield`          | `lua_setfield`          |   ✓   |
 | `lua_setglobal`         | `lua_setglobal`         |   ✓   |
-| `lua_seti`              |                         |       |
+| `lua_seti`              | `lua_seti`              |   ✓   |
 | `lua_setmetatable`      |                         |       |
-| `lua_settable`          |                         |       |
+| `lua_settable`          | `lua_settable`          |   ✓   |
 | `lua_settop`            | `lua_settop`            |   ✓   |
 | `lua_setuservalue`      |                         |       |
 | `lua_status`            | `lua_status`            |   ✓   |
