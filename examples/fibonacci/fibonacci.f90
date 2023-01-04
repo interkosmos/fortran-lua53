@@ -1,4 +1,4 @@
-! example.f90
+! fibonacci.f90
 !
 ! Example program that calls the recursive Lua routine `fib()` in file
 ! `fibonacci.lua` and outputs the result.

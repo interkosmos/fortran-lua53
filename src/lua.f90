@@ -58,7 +58,9 @@ module lua
     public :: lua_rawset
     public :: lua_rawseti
     public :: lua_register
+    public :: lua_setfield
     public :: lua_setglobal
+    public :: lua_settable
     public :: lua_settop
     public :: lua_status
     public :: lua_toboolean
@@ -580,6 +582,15 @@ module lua
             integer(kind=lua_integer), intent(in), value :: n
         end subroutine lua_rawseti
 
+        ! void lua_setfield(lua_State *L, int idx, const char *k)
+        subroutine lua_setfield(l, idx, k) bind(c, name='lua_setfield')
+            import :: c_char, c_int, c_ptr
+            implicit none
+            type(c_ptr),            intent(in), value :: l
+            integer(kind=c_int),    intent(in), value :: idx
+            character(kind=c_char), intent(in)        :: k
+        end subroutine lua_setfield
+
         ! void lua_setglobal(lua_State *L, const char *name)
         subroutine lua_setglobal(l, name) bind(c, name='lua_setglobal')
             import :: c_char, c_ptr
@@ -587,6 +598,14 @@ module lua
             type(c_ptr),            intent(in), value :: l
             character(kind=c_char), intent(in)        :: name
         end subroutine lua_setglobal
+
+        ! void lua_settable(lua_State *L, int idx)
+        subroutine lua_settable(l, idx) bind(c, name='lua_settable')
+            import :: c_int, c_ptr
+            implicit none
+            type(c_ptr),         intent(in), value :: l
+            integer(kind=c_int), intent(in), value :: idx
+        end subroutine lua_settable
 
         ! void lua_settop(lua_State *L, int idx)
         subroutine lua_settop(l, idx) bind(c, name='lua_settop')
@@ -774,11 +793,7 @@ contains
         integer,     intent(in) :: idx
         logical                 :: lua_toboolean
 
-        if (lua_toboolean_(l, idx) == 0) then
-            lua_toboolean = .false.
-        else
-            lua_toboolean = .true.
-        end if
+        lua_toboolean = (lua_toboolean_(l, idx) /= 0)
     end function lua_toboolean
 
     ! lua_Number lua_tonumber(lua_State *l, int idx)
