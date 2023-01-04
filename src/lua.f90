@@ -60,6 +60,7 @@ module lua
     public :: lua_register
     public :: lua_setfield
     public :: lua_setglobal
+    public :: lua_seti
     public :: lua_settable
     public :: lua_settop
     public :: lua_status
@@ -598,6 +599,15 @@ module lua
             type(c_ptr),            intent(in), value :: l
             character(kind=c_char), intent(in)        :: name
         end subroutine lua_setglobal
+
+        ! void lua_seti(lua_State *L, int idx, lua_Integer n)
+        subroutine lua_seti(l, idx, n) bind(c, name='lua_seti')
+            import :: c_int, c_ptr, lua_integer
+            implicit none
+            type(c_ptr),               intent(in), value :: l
+            integer(kind=c_int),       intent(in), value :: idx
+            integer(kind=lua_integer), intent(in), value :: n
+        end subroutine lua_seti
 
         ! void lua_settable(lua_State *L, int idx)
         subroutine lua_settable(l, idx) bind(c, name='lua_settable')
