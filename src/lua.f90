@@ -495,7 +495,7 @@ module lua
         end subroutine lua_copy
 
         ! void lua_createtable(lua_State *L, int narr, int nrec)
-        subroutine lua_createtable(l, narr, nrec) bind(c, name='lua_creatable')
+        subroutine lua_createtable(l, narr, nrec) bind(c, name='lua_createtable')
             import :: c_int, c_ptr
             implicit none
             type(c_ptr),         intent(in), value :: l
