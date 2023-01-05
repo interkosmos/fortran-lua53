@@ -503,13 +503,6 @@ module lua
             integer(kind=c_int), intent(in), value :: nrec
         end subroutine lua_createtable
 
-        ! void lua_newtable(lua_State *L)
-        subroutine lua_newtable(l) bind(c, name='lua_newtable')
-            import :: c_ptr
-            implicit none
-            type(c_ptr), intent(in), value :: l
-        end subroutine lua_newtable
-
         ! void lua_pushboolean(lua_State *L, int b)
         subroutine lua_pushboolean(l, b) bind(c, name='lua_pushboolean')
             import :: c_int, c_ptr
@@ -908,6 +901,13 @@ contains
 
         call lua_callk(l, nargs, nresults, int(0, kind=i8), c_null_funptr)
     end subroutine lua_call
+
+    ! void lua_newtable(lua_State *L)
+    subroutine lua_newtable(l)
+        type(c_ptr), intent(in) :: l
+
+        call lua_createtable(l, 0, 0)
+    end subroutine lua_newtable
 
     ! void lua_pop(lua_State *l, int n)
     subroutine lua_pop(l, n)
