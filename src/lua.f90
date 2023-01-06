@@ -882,9 +882,9 @@ contains
 
     ! const char *lua_pushstring(lua_State *L, const char *s)
     function lua_pushstring(l, s)
-        type(c_ptr),            intent(in) :: l
-        character(kind=c_char), intent(in) :: s
-        type(c_ptr)                        :: lua_pushstring
+        type(c_ptr),      intent(in) :: l
+        character(len=*), intent(in) :: s
+        type(c_ptr)                  :: lua_pushstring
 
         lua_pushstring = lua_pushstring_(l, s // c_null_char)
     end function lua_pushstring
