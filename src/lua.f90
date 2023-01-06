@@ -390,23 +390,23 @@ module lua
         end function lua_pcallk
 
         ! const char *lua_pushlstring(lua_State *L, const char *s, size_t len)
-        function lua_pushlstring(l, s, len) bind(c, name='lua_pushlstring')
+        function lua_pushlstring_(l, s, len) bind(c, name='lua_pushlstring')
             import :: c_char, c_ptr, c_size_t
             implicit none
             type(c_ptr),            intent(in), value :: l
             character(kind=c_char), intent(in)        :: s
             integer(kind=c_size_t), intent(in), value :: len
-            type(c_ptr)                               :: lua_pushlstring
-        end function lua_pushlstring
+            type(c_ptr)                               :: lua_pushlstring_
+        end function lua_pushlstring_
 
         ! const char *lua_pushstring(lua_State *L, const char *s)
-        function lua_pushstring(l, s) bind(c, name='lua_pushstring')
+        function lua_pushstring_(l, s) bind(c, name='lua_pushstring')
             import :: c_char, c_ptr
             implicit none
             type(c_ptr),            intent(in), value :: l
             character(kind=c_char), intent(in)        :: s
-            type(c_ptr)                               :: lua_pushstring
-        end function lua_pushstring
+            type(c_ptr)                               :: lua_pushstring_
+        end function lua_pushstring_
 
         ! int lua_pushthread(lua_State *L)
         function lua_pushthread(l) bind(c, name='lua_pushthread')
@@ -551,7 +551,7 @@ module lua
             real(kind=lua_number), intent(in), value :: n
         end subroutine lua_pushnumber
 
-        ! void  lua_pushvalue(lua_State *L, int idx)
+        ! void lua_pushvalue(lua_State *L, int idx)
         subroutine lua_pushvalue(l, idx) bind(c, name='lua_pushvalue')
             import :: c_int, c_ptr
             implicit none
@@ -577,21 +577,21 @@ module lua
         end subroutine lua_rawseti
 
         ! void lua_setfield(lua_State *L, int idx, const char *k)
-        subroutine lua_setfield(l, idx, k) bind(c, name='lua_setfield')
+        subroutine lua_setfield_(l, idx, k) bind(c, name='lua_setfield')
             import :: c_char, c_int, c_ptr
             implicit none
             type(c_ptr),            intent(in), value :: l
             integer(kind=c_int),    intent(in), value :: idx
             character(kind=c_char), intent(in)        :: k
-        end subroutine lua_setfield
+        end subroutine lua_setfield_
 
         ! void lua_setglobal(lua_State *L, const char *name)
-        subroutine lua_setglobal(l, name) bind(c, name='lua_setglobal')
+        subroutine lua_setglobal_(l, name) bind(c, name='lua_setglobal')
             import :: c_char, c_ptr
             implicit none
             type(c_ptr),            intent(in), value :: l
             character(kind=c_char), intent(in)        :: name
-        end subroutine lua_setglobal
+        end subroutine lua_setglobal_
 
         ! void lua_seti(lua_State *L, int idx, lua_Integer n)
         subroutine lua_seti(l, idx, n) bind(c, name='lua_seti')
@@ -870,6 +870,25 @@ contains
         lual_loadstring = lual_loadstring_(l, s // c_null_char)
     end function lual_loadstring
 
+    ! const char *lua_pushlstring(lua_State *L, const char *s, size_t len)
+    function lua_pushlstring(l, s, len)
+        type(c_ptr),            intent(in) :: l
+        character(len=*),       intent(in) :: s
+        integer(kind=c_size_t), intent(in) :: len
+        type(c_ptr)                        :: lua_pushlstring
+
+        lua_pushlstring = lua_pushlstring_(l, s // c_null_char, len)
+    end function lua_pushlstring
+
+    ! const char *lua_pushstring(lua_State *L, const char *s)
+    function lua_pushstring(l, s)
+        type(c_ptr),            intent(in) :: l
+        character(kind=c_char), intent(in) :: s
+        type(c_ptr)                        :: lua_pushstring
+
+        lua_pushstring = lua_pushstring_(l, s // c_null_char)
+    end function lua_pushstring
+
     subroutine c_f_str_ptr(c_str, f_str, size)
         !! Utility routine that copies a C string, passed as a C pointer, to a
         !! Fortran string.
@@ -934,4 +953,21 @@ contains
         call lua_pushcfunction(l, f)
         call lua_setglobal(l, n // c_null_char)
     end subroutine lua_register
+
+    ! void lua_setfield(lua_State *L, int idx, const char *k)
+    subroutine lua_setfield(l, idx, k)
+        type(c_ptr),      intent(in) :: l
+        integer,          intent(in) :: idx
+        character(len=*), intent(in) :: k
+
+        call lua_setfield_(l, idx, k // c_null_char)
+    end subroutine lua_setfield
+
+    ! int lua_getglobal(lua_State *L, const char *name)
+    subroutine lua_setglobal(l, name)
+        type(c_ptr),            intent(in) :: l
+        character(kind=c_char), intent(in) :: name
+
+        call lua_setglobal_(l, name // c_null_char)
+    end subroutine lua_setglobal
 end module lua
