@@ -12,3 +12,6 @@ link = "lua"
 
 [library]
 source-dir = "src"
+
+[install]
+library = true
