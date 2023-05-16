@@ -778,7 +778,7 @@ contains
         integer,     intent(in) :: msgh
         integer                 :: lua_pcall
 
-        lua_pcall = lua_pcallk(l, nargs, nresults, msgh, int(0, kind=i8), c_null_funptr)
+        lua_pcall = lua_pcallk(l, nargs, nresults, msgh, int(0, kind=c_intptr_t), c_null_funptr)
     end function lua_pcall
 
     ! lua_Integer lua_tointeger(lua_State *l, int idx)
