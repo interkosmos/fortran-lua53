@@ -918,7 +918,7 @@ contains
         integer,     intent(in) :: nargs
         integer,     intent(in) :: nresults
 
-        call lua_callk(l, nargs, nresults, int(0, kind=i8), c_null_funptr)
+        call lua_callk(l, nargs, nresults, int(0, kind=c_size_t), c_null_funptr)
     end subroutine lua_call
 
     ! void lua_newtable(lua_State *L)
