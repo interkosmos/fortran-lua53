@@ -68,7 +68,7 @@ program main
         print '("table length: ", i0)', lua_rawlen(l, -1)
 
         do i = 1, 3
-            rc = lua_rawgeti(l, -1, i)
+            rc = lua_rawgeti(l, -1, int(i, kind=lua_integer))
 
             if (lua_isnumber(l, -1) == 1) then
                 print '("i: ", i4)', lua_tointeger(l, -1)

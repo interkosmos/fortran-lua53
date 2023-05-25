@@ -1,5 +1,6 @@
 # fortran-lua53
-A collection of ISO C binding interfaces to Lua 5.3 for Fortran 2003, to call
+
+A collection of ISO C binding interfaces to Lua 5.3 for Fortran 2008, to call
 Lua from Fortran and vice versa.
 
 Similar projects:
@@ -10,6 +11,7 @@ Similar projects:
 * [luaf](https://bitbucket.org/vadimz/luaf/): Selected bindings to Lua 5.1 (MIT).
 
 ## Build
+
 Install Lua 5.3 with development headers. On FreeBSD, run:
 
 ```
@@ -47,6 +49,7 @@ Link your Fortran applications against `libfortran-lua53.a`, and
 as well.
 
 ## Example
+
 The following basic example shows how to call the Lua function `hello()` in
 `script.lua` from Fortran.
 
@@ -97,6 +100,7 @@ $ gfortran -o example example.f90 libfortran-lua53.a /usr/local/lib/liblua-5.3.a
 ```
 
 ## Further Examples
+
 Additional examples can be found in `examples/`.
 
 * **fibonacci:** calls a recursive Lua routine loaded from file.
@@ -105,6 +109,7 @@ Additional examples can be found in `examples/`.
 * **table:** reads values from a Lua table.
 
 ## fpm
+
 You can add *fortran-lua53* as an [fpm](https://github.com/fortran-lang/fpm)
 dependency:
 
@@ -113,7 +118,24 @@ dependency:
 fortran-lua53 = { git = "https://github.com/interkosmos/fortran-lua53.git" }
 ```
 
+## Compatibility
+
+The integer and float types used by Lua internally depend on the targeted
+platform. The program `test/types.c` outputs the types:
+
+```
+$ make test
+$ ./types
+lua_integer.: c_long_long
+lua_number..: c_double
+lua_kcontext: c_intptr_t
+```
+
+You may have to alter `lua_integer`, `lua_number`, and `lua_kcontext` in
+`src/lua.f90` accordingly.
+
 ## Coverage
+
 | Function Name           | Fortran Interface Name  | Bound | Wrapper |
 |-------------------------|-------------------------|-------|---------|
 | `luaL_addchar`          |                         |       |         |
@@ -282,4 +304,5 @@ fortran-lua53 = { git = "https://github.com/interkosmos/fortran-lua53.git" }
 | `lua_yieldk`            |                         |       |         |
 
 ## Licence
+
 ISC

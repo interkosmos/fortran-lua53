@@ -1,6 +1,6 @@
 ! lua.f90
 !
-! A collection of ISO C binding interfaces to Lua 5.3 for Fortran 2003.
+! A collection of ISO C binding interfaces to Lua 5.3 for Fortran 2008.
 !
 ! Author:  Philipp Engel
 ! Licence: ISC
@@ -9,6 +9,69 @@ module lua
     use, intrinsic :: iso_fortran_env, only: i8 => int64
     implicit none
     private
+
+    ! The integer and float type used by Lua are platform-specific. Select the
+    ! types according to your local Lua library.
+    integer, parameter, public :: lua_integer  = c_long_long ! c_int, c_long, c_long_long, c_int64_t
+    integer, parameter, public :: lua_number   = c_double    ! c_float, c_double, c_long_double
+    integer, parameter, public :: lua_kcontext = c_intptr_t  ! c_intptr_t, c_ptrdiff_t
+
+    integer(kind=c_int), parameter, public :: LUA_VERSION_NUM = 503
+
+    ! Option for multiple returns in `lua_pcall()` and `lua_call()`.
+    integer(kind=c_int), parameter, public :: LUA_MULTRET = -1
+
+    ! Basic types.
+    integer(kind=c_int), parameter, public :: LUA_TNONE          = -1
+    integer(kind=c_int), parameter, public :: LUA_TNIL           = 0
+    integer(kind=c_int), parameter, public :: LUA_TBOOLEAN       = 1
+    integer(kind=c_int), parameter, public :: LUA_TLIGHTUSERDATA = 2
+    integer(kind=c_int), parameter, public :: LUA_TNUMBER        = 3
+    integer(kind=c_int), parameter, public :: LUA_TSTRING        = 4
+    integer(kind=c_int), parameter, public :: LUA_TTABLE         = 5
+    integer(kind=c_int), parameter, public :: LUA_TFUNCTION      = 6
+    integer(kind=c_int), parameter, public :: LUA_TUSERDATA      = 7
+    integer(kind=c_int), parameter, public :: LUA_TTHREAD        = 8
+
+    ! Comparison and arithmetic options.
+    integer(kind=c_int), parameter, public :: LUA_OPADD  = 0
+    integer(kind=c_int), parameter, public :: LUA_OPSUB  = 1
+    integer(kind=c_int), parameter, public :: LUA_OPMUL  = 2
+    integer(kind=c_int), parameter, public :: LUA_OPMOD  = 3
+    integer(kind=c_int), parameter, public :: LUA_OPPOW  = 4
+    integer(kind=c_int), parameter, public :: LUA_OPDIV  = 5
+    integer(kind=c_int), parameter, public :: LUA_OPIDIV = 6
+    integer(kind=c_int), parameter, public :: LUA_OPBAND = 7
+    integer(kind=c_int), parameter, public :: LUA_OPBOR  = 8
+    integer(kind=c_int), parameter, public :: LUA_OPBXOR = 9
+    integer(kind=c_int), parameter, public :: LUA_OPSHL  = 10
+    integer(kind=c_int), parameter, public :: LUA_OPSHR  = 11
+    integer(kind=c_int), parameter, public :: LUA_OPUNM  = 12
+    integer(kind=c_int), parameter, public :: LUA_OPBNOT = 13
+
+    integer(kind=c_int), parameter, public :: LUA_OPEQ = 0
+    integer(kind=c_int), parameter, public :: LUA_OPLT = 1
+    integer(kind=c_int), parameter, public :: LUA_OPLE = 2
+
+    ! Garbage-collection options.
+    integer(kind=c_int), parameter, public :: LUA_GCSTOP       = 0
+    integer(kind=c_int), parameter, public :: LUA_GCRESTART    = 1
+    integer(kind=c_int), parameter, public :: LUA_GCCOLLECT    = 2
+    integer(kind=c_int), parameter, public :: LUA_GCCOUNT      = 3
+    integer(kind=c_int), parameter, public :: LUA_GCCOUNTB     = 4
+    integer(kind=c_int), parameter, public :: LUA_GCSTEP       = 5
+    integer(kind=c_int), parameter, public :: LUA_GCSETPAUSE   = 6
+    integer(kind=c_int), parameter, public :: LUA_GCSETSTEPMUL = 7
+    integer(kind=c_int), parameter, public :: LUA_GCISRUNNING  = 9
+
+    ! Thread status.
+    integer(kind=c_int), parameter, public :: LUA_OK        = 0
+    integer(kind=c_int), parameter, public :: LUA_YIELD     = 1
+    integer(kind=c_int), parameter, public :: LUA_ERRRUN    = 2
+    integer(kind=c_int), parameter, public :: LUA_ERRSYNTAX = 3
+    integer(kind=c_int), parameter, public :: LUA_ERRMEM    = 4
+    integer(kind=c_int), parameter, public :: LUA_ERRGCMM   = 5
+    integer(kind=c_int), parameter, public :: LUA_ERRERR    = 6
 
     public :: lua_arith
     public :: lua_call
@@ -72,6 +135,7 @@ module lua
     public :: lua_tostring
     public :: lua_type
     public :: lua_typename
+    public :: lual_checkversion_
     public :: lual_dofile
     public :: lual_len
     public :: lual_loadfile
@@ -83,71 +147,13 @@ module lua
     private :: c_f_str_ptr
     private :: copy
 
-    integer, parameter, public :: lua_integer = c_int
-    integer, parameter, public :: lua_number  = c_double
-
-    ! Option for multiple returns in `lua_pcall()` and `lua_call()`.
-    integer(kind=c_int), parameter, public :: LUA_MULTRET = -1
-
-    ! Basic types.
-    integer(kind=c_int), parameter, public :: LUA_TNONE          = -1
-    integer(kind=c_int), parameter, public :: LUA_TNIL           = 0
-    integer(kind=c_int), parameter, public :: LUA_TBOOLEAN       = 1
-    integer(kind=c_int), parameter, public :: LUA_TLIGHTUSERDATA = 2
-    integer(kind=c_int), parameter, public :: LUA_TNUMBER        = 3
-    integer(kind=c_int), parameter, public :: LUA_TSTRING        = 4
-    integer(kind=c_int), parameter, public :: LUA_TTABLE         = 5
-    integer(kind=c_int), parameter, public :: LUA_TFUNCTION      = 6
-    integer(kind=c_int), parameter, public :: LUA_TUSERDATA      = 7
-    integer(kind=c_int), parameter, public :: LUA_TTHREAD        = 8
-
-    ! Comparison and arithmetic options.
-    integer(kind=c_int), parameter, public :: LUA_OPADD  = 0
-    integer(kind=c_int), parameter, public :: LUA_OPSUB  = 1
-    integer(kind=c_int), parameter, public :: LUA_OPMUL  = 2
-    integer(kind=c_int), parameter, public :: LUA_OPMOD  = 3
-    integer(kind=c_int), parameter, public :: LUA_OPPOW  = 4
-    integer(kind=c_int), parameter, public :: LUA_OPDIV  = 5
-    integer(kind=c_int), parameter, public :: LUA_OPIDIV = 6
-    integer(kind=c_int), parameter, public :: LUA_OPBAND = 7
-    integer(kind=c_int), parameter, public :: LUA_OPBOR  = 8
-    integer(kind=c_int), parameter, public :: LUA_OPBXOR = 9
-    integer(kind=c_int), parameter, public :: LUA_OPSHL  = 10
-    integer(kind=c_int), parameter, public :: LUA_OPSHR  = 11
-    integer(kind=c_int), parameter, public :: LUA_OPUNM  = 12
-    integer(kind=c_int), parameter, public :: LUA_OPBNOT = 13
-
-    integer(kind=c_int), parameter, public :: LUA_OPEQ = 0
-    integer(kind=c_int), parameter, public :: LUA_OPLT = 1
-    integer(kind=c_int), parameter, public :: LUA_OPLE = 2
-
-    ! Garbage-collection options.
-    integer(kind=c_int), parameter, public :: LUA_GCSTOP       = 0
-    integer(kind=c_int), parameter, public :: LUA_GCRESTART    = 1
-    integer(kind=c_int), parameter, public :: LUA_GCCOLLECT    = 2
-    integer(kind=c_int), parameter, public :: LUA_GCCOUNT      = 3
-    integer(kind=c_int), parameter, public :: LUA_GCCOUNTB     = 4
-    integer(kind=c_int), parameter, public :: LUA_GCSTEP       = 5
-    integer(kind=c_int), parameter, public :: LUA_GCSETPAUSE   = 6
-    integer(kind=c_int), parameter, public :: LUA_GCSETSTEPMUL = 7
-    integer(kind=c_int), parameter, public :: LUA_GCISRUNNING  = 9
-
-    ! Thread status.
-    integer(kind=c_int), parameter, public :: LUA_OK        = 0
-    integer(kind=c_int), parameter, public :: LUA_YIELD     = 1
-    integer(kind=c_int), parameter, public :: LUA_ERRRUN    = 2
-    integer(kind=c_int), parameter, public :: LUA_ERRSYNTAX = 3
-    integer(kind=c_int), parameter, public :: LUA_ERRMEM    = 4
-    integer(kind=c_int), parameter, public :: LUA_ERRGCMM   = 5
-    integer(kind=c_int), parameter, public :: LUA_ERRERR    = 6
-
     ! Interfaces to libc.
     interface
         function c_strlen(str) bind(c, name='strlen')
             import :: c_ptr, c_size_t
             implicit none
             type(c_ptr), intent(in), value :: str
-            integer(c_size_t)              :: c_strlen
+            integer(kind=c_size_t)         :: c_strlen
         end function c_strlen
     end interface
 
@@ -306,6 +312,7 @@ module lua
         ! size_t lua_rawlen(lua_State *L, int idx)
         function lua_rawlen(l, idx) bind(c, name='lua_rawlen')
             import :: c_int, c_ptr, c_size_t
+            implicit none
             type(c_ptr),         intent(in), value :: l
             integer(kind=c_int), intent(in), value :: idx
             integer(kind=c_size_t)                 :: lua_rawlen
@@ -378,15 +385,15 @@ module lua
 
         ! int lua_pcallk(lua_State *L, int nargs, int nresults, int msgh, lua_KContext ctx, lua_KFunction k)
         function lua_pcallk(l, nargs, nresults, msgh, ctx, k) bind(c, name='lua_pcallk')
-            import :: c_funptr, c_int, c_intptr_t, c_ptr
+            import :: c_funptr, c_int, c_ptr, lua_kcontext
             implicit none
-            type(c_ptr),              intent(in), value :: l
-            integer(kind=c_int),      intent(in), value :: nargs
-            integer(kind=c_int),      intent(in), value :: nresults
-            integer(kind=c_int),      intent(in), value :: msgh
-            integer(kind=c_intptr_t), intent(in), value :: ctx
-            type(c_funptr),           intent(in), value :: k
-            integer(kind=c_int)                         :: lua_pcallk
+            type(c_ptr),                intent(in), value :: l
+            integer(kind=c_int),        intent(in), value :: nargs
+            integer(kind=c_int),        intent(in), value :: nresults
+            integer(kind=c_int),        intent(in), value :: msgh
+            integer(kind=lua_kcontext), intent(in), value :: ctx
+            type(c_funptr),             intent(in), value :: k
+            integer(kind=c_int)                           :: lua_pcallk
         end function lua_pcallk
 
         ! const char *lua_pushlstring(lua_State *L, const char *s, size_t len)
@@ -459,15 +466,15 @@ module lua
             integer(kind=c_int), intent(in), value :: op
         end subroutine lua_arith
 
-        ! void lua_callk(lua_State *L, int nargs, int nresults, int ctx, lua_CFunction k)
+        ! void lua_callk(lua_State *L, int nargs, int nresults, lua_KContext ctx, lua_CFunction k)
         subroutine lua_callk(l, nargs, nresults, ctx, k) bind(c, name='lua_callk')
-            import :: c_funptr, c_int, c_intptr_t, c_ptr
+            import :: c_funptr, c_int, c_ptr, lua_kcontext
             implicit none
-            type(c_ptr),              intent(in), value :: l
-            integer(kind=c_int),      intent(in), value :: nargs
-            integer(kind=c_int),      intent(in), value :: nresults
-            integer(kind=c_intptr_t), intent(in), value :: ctx
-            type(c_funptr),           intent(in), value :: k
+            type(c_ptr),                intent(in), value :: l
+            integer(kind=c_int),        intent(in), value :: nargs
+            integer(kind=c_int),        intent(in), value :: nresults
+            integer(kind=lua_kcontext), intent(in), value :: ctx
+            type(c_funptr),             intent(in), value :: k
         end subroutine lua_callk
 
         ! void lua_close(lua_State *L)
@@ -522,10 +529,10 @@ module lua
 
         ! void lua_pushinteger(lua_State *L, lua_Integer n)
         subroutine lua_pushinteger(l, n) bind(c, name='lua_pushinteger')
-            import :: c_int, c_ptr
+            import :: c_ptr, lua_integer
             implicit none
             type(c_ptr),         intent(in), value :: l
-            integer(kind=c_int), intent(in), value :: n
+            integer(kind=lua_integer), intent(in), value :: n
         end subroutine lua_pushinteger
 
         ! void  lua_pushlightuserdata(lua_State *L, void *p)
@@ -618,6 +625,15 @@ module lua
             integer(kind=c_int), intent(in), value :: idx
         end subroutine lua_settop
 
+        ! void luaL_checkversion_(lua_State *L, lua_Number ver, size_t sz)
+        subroutine lual_checkversion_(l, ver, sz) bind(c, name='luaL_checkversion_')
+            import :: c_ptr, c_size_t, lua_number
+            implicit none
+            type(c_ptr),            intent(in), value :: l
+            real(kind=lua_number),  intent(in), value :: ver
+            integer(kind=c_size_t), intent(in), value :: sz
+        end subroutine lual_checkversion_
+
         ! void luaL_openlibs(lua_State *L)
         subroutine lual_openlibs(l) bind(c, name='luaL_openlibs')
             import :: c_ptr
@@ -666,9 +682,7 @@ contains
         integer                 :: lua_isboolean
 
         lua_isboolean = 0
-
-        if (lua_type(l, idx) == LUA_TBOOLEAN) &
-            lua_isboolean= 1
+        if (lua_type(l, idx) == LUA_TBOOLEAN) lua_isboolean= 1
     end function lua_isboolean
 
     ! int lua_isfunction(lua_State *L, int index)
@@ -680,9 +694,7 @@ contains
         integer                 :: lua_isfunction
 
         lua_isfunction = 0
-
-        if (lua_type(l, idx) == LUA_TFUNCTION) &
-            lua_isfunction = 1
+        if (lua_type(l, idx) == LUA_TFUNCTION) lua_isfunction = 1
     end function lua_isfunction
 
     ! int lua_islightuserdata(lua_State *L, int index)
@@ -694,9 +706,7 @@ contains
         integer                 :: lua_islightuserdata
 
         lua_islightuserdata = 0
-
-        if (lua_type(l, idx) == LUA_TLIGHTUSERDATA) &
-            lua_islightuserdata = 1
+        if (lua_type(l, idx) == LUA_TLIGHTUSERDATA) lua_islightuserdata = 1
     end function lua_islightuserdata
 
     ! int lua_isnil(lua_State *L, int index)
@@ -708,9 +718,7 @@ contains
         integer                 :: lua_isnil
 
         lua_isnil = 0
-
-        if (lua_type(l, idx) == LUA_TNIL) &
-            lua_isnil = 1
+        if (lua_type(l, idx) == LUA_TNIL) lua_isnil = 1
     end function lua_isnil
 
     ! int lua_isnone(lua_State *L, int index)
@@ -722,9 +730,7 @@ contains
         integer                 :: lua_isnone
 
         lua_isnone = 0
-
-        if (lua_type(l, idx) == LUA_TNONE) &
-            lua_isnone = 1
+        if (lua_type(l, idx) == LUA_TNONE) lua_isnone = 1
     end function lua_isnone
 
     ! int lua_isnoneornil(lua_State *L, int index)
@@ -736,9 +742,7 @@ contains
         integer                 :: lua_isnoneornil
 
         lua_isnoneornil = 0
-
-        if (lua_type(l, idx) <= 0) &
-            lua_isnoneornil = 1
+        if (lua_type(l, idx) <= 0) lua_isnoneornil = 1
     end function lua_isnoneornil
 
     ! int lua_istable(lua_State *L, int index)
@@ -750,9 +754,7 @@ contains
         integer                 :: lua_istable
 
         lua_istable = 0
-
-        if (lua_type(l, idx) == LUA_TTABLE) &
-            lua_istable = 1
+        if (lua_type(l, idx) == LUA_TTABLE) lua_istable = 1
     end function lua_istable
 
     ! int lua_isthread(lua_State *L, int index)
@@ -764,9 +766,7 @@ contains
         integer                 :: lua_isthread
 
         lua_isthread = 0
-
-        if (lua_type(l, idx) == LUA_TTHREAD) &
-            lua_isthread = 1
+        if (lua_type(l, idx) == LUA_TTHREAD) lua_isthread = 1
     end function lua_isthread
 
     ! int lua_pcall(lua_State *L, int nargs, int nresults, int msgh)
@@ -778,7 +778,7 @@ contains
         integer,     intent(in) :: msgh
         integer                 :: lua_pcall
 
-        lua_pcall = lua_pcallk(l, nargs, nresults, msgh, int(0, kind=c_intptr_t), c_null_funptr)
+        lua_pcall = lua_pcallk(l, nargs, nresults, msgh, int(0, kind=lua_kcontext), c_null_funptr)
     end function lua_pcall
 
     ! lua_Integer lua_tointeger(lua_State *l, int idx)
@@ -844,9 +844,7 @@ contains
         integer                      :: lual_dofile
 
         lual_dofile = lual_loadfile(l, fn)
-
-        if (lual_dofile == 0) &
-            lual_dofile = lua_pcall(l, 0, LUA_MULTRET, 0)
+        if (lual_dofile == 0) lual_dofile = lua_pcall(l, 0, LUA_MULTRET, 0)
     end function lual_dofile
 
     ! int luaL_loadfile(lua_State *L, const char *filename)

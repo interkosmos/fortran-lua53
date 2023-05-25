@@ -9,12 +9,11 @@ program main
     character(len=*), parameter :: FILE_NAME = 'fibonacci.lua'
 
     type(c_ptr) :: l
-    integer     :: nargs
-    integer     :: nresults
-    integer     :: rc
-    integer     :: r1, r2
-    integer     :: x
+    integer     :: nargs, nresults
+    integer     :: rc, x
     logical     :: file_exists
+
+    integer(kind=lua_integer) :: r1, r2
 
     inquire (file=FILE_NAME, exist=file_exists)
     if (.not. file_exists) stop 'Error: Lua file not found'
@@ -29,7 +28,7 @@ program main
     rc = lua_getglobal(l, 'fib')
 
     if (lua_isfunction(l, -1) == 1) then
-        call lua_pushinteger(l, x)
+        call lua_pushinteger(l, int(x, kind=lua_integer))
         rc = lua_pcall(l, nargs, nresults, 0)
 
         r1 = lua_tointeger(l, -1)
