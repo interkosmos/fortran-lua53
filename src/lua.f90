@@ -10,7 +10,7 @@ module lua
     implicit none
     private
 
-    ! The integer and float type used by Lua are platform-specific. Select the
+    ! The integer and float types used by Lua are platform-specific. Select the
     ! types according to your local Lua library.
     integer, parameter, public :: lua_integer  = c_long_long ! c_int, c_long, c_long_long, c_int64_t
     integer, parameter, public :: lua_number   = c_double    ! c_float, c_double, c_long_double
@@ -531,7 +531,7 @@ module lua
         subroutine lua_pushinteger(l, n) bind(c, name='lua_pushinteger')
             import :: c_ptr, lua_integer
             implicit none
-            type(c_ptr),         intent(in), value :: l
+            type(c_ptr),               intent(in), value :: l
             integer(kind=lua_integer), intent(in), value :: n
         end subroutine lua_pushinteger
 
@@ -944,12 +944,13 @@ contains
 
     ! void lua_register(lua_State *L, const char *name, lua_CFunction f)
     subroutine lua_register(l, n, f)
+        !! Macro replacement.
         type(c_ptr),      intent(in) :: l
         character(len=*), intent(in) :: n
         type(c_funptr),   intent(in) :: f
 
         call lua_pushcfunction(l, f)
-        call lua_setglobal(l, n // c_null_char)
+        call lua_setglobal_(l, n // c_null_char)
     end subroutine lua_register
 
     ! void lua_setfield(lua_State *L, int idx, const char *k)
