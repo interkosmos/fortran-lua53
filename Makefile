@@ -3,8 +3,9 @@
 CC      = gcc
 FC      = gfortran
 AR      = ar
-CFLAGS  = -Wall `pkg-config --cflags lua-5.3`
-FFLAGS  = -Wall `pkg-config --cflags lua-5.3`
+DEBUG   = #-g -O0 -Wall -fmax-errors=1
+CFLAGS  = $(DEBUG) `pkg-config --cflags lua-5.3`
+FFLAGS  = $(DEBUG) `pkg-config --cflags lua-5.3`
 ARFLAGS = rcs
 LDFLAGS = `pkg-config --libs-only-L lua-5.3`
 LDLIBS  = `pkg-config --libs-only-l lua-5.3`

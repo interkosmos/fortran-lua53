@@ -145,7 +145,6 @@ module lua
     public :: lual_openlibs
 
     private :: c_f_str_ptr
-    private :: copy
 
     ! Interfaces to libc.
     interface
@@ -642,16 +641,6 @@ module lua
         end subroutine lual_openlibs
     end interface
 contains
-    pure function copy(a)
-        character, intent(in)  :: a(:)
-        character(len=size(a)) :: copy
-        integer(kind=i8)       :: i
-
-        do i = 1, size(a)
-            copy(i:i) = a(i)
-        end do
-    end function copy
-
     ! int lua_getfield(lua_State *L, int idx, const char *k)
     function lua_getfield(l, idx, k)
         !! Wrapper for `lua_getfield_()` that null-terminates string `k`.
@@ -887,29 +876,6 @@ contains
         lua_pushstring = lua_pushstring_(l, s // c_null_char)
     end function lua_pushstring
 
-    subroutine c_f_str_ptr(c_str, f_str, size)
-        !! Utility routine that copies a C string, passed as a C pointer, to a
-        !! Fortran string.
-        type(c_ptr),                   intent(in)           :: c_str
-        character(len=:), allocatable, intent(out)          :: f_str
-        integer(kind=i8),              intent(in), optional :: size
-        character(kind=c_char), pointer                     :: ptrs(:)
-        integer(kind=i8)                                    :: sz
-
-        if (.not. c_associated(c_str)) return
-
-        if (present(size)) then
-            sz = size
-        else
-            sz = c_strlen(c_str)
-        end if
-
-        if (sz < 0) return
-        call c_f_pointer(c_str, ptrs, [ sz ])
-        allocate (character(len=sz) :: f_str)
-        f_str = copy(ptrs)
-    end subroutine c_f_str_ptr
-
     ! void lua_call(lua_State *L, int nargs, int nresults)
     subroutine lua_call(l, nargs, nresults)
         type(c_ptr), intent(in) :: l
@@ -969,4 +935,29 @@ contains
 
         call lua_setglobal_(l, name // c_null_char)
     end subroutine lua_setglobal
+
+    subroutine c_f_str_ptr(c_str, f_str)
+        !! Copies a C string, passed as a C pointer, to a Fortran string.
+        type(c_ptr),                   intent(in)  :: c_str
+        character(len=:), allocatable, intent(out) :: f_str
+
+        character(kind=c_char), pointer :: ptrs(:)
+        integer(kind=c_size_t)          :: i, sz
+
+        copy_block: block
+            if (.not. c_associated(c_str)) exit copy_block
+            sz = c_strlen(c_str)
+            if (sz < 0) exit copy_block
+            call c_f_pointer(c_str, ptrs, [ sz ])
+            allocate (character(len=sz) :: f_str)
+
+            do i = 1, sz
+                f_str(i:i) = ptrs(i)
+            end do
+
+            return
+        end block copy_block
+
+        if (.not. allocated(f_str)) f_str = ''
+    end subroutine c_f_str_ptr
 end module lua
