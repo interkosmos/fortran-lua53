@@ -7,6 +7,7 @@ Similar projects:
 
 * [AOTUS](https://geb.sts.nt.uni-siegen.de/doxy/aotus/): Library that provides a Fortran wrapper to use Lua scripts as configuration files (MIT).
 * [FortLua](https://github.com/adolgert/FortLua): Example that shows how to load Lua configuration files from Fortran, based on AOTUS (MIT).
+* [fortran-lua54](https://github.com/interkosmos/fortran-lua54): Fortran 2008 bindings to Lua 5.4 (ISC).
 * [f2k3-lua](https://github.com/MaikBeckmann/f2k3-lua/tree/simple): Lua bindings for loading configuration files only (MIT).
 * [luaf](https://bitbucket.org/vadimz/luaf/): Selected bindings to Lua 5.1 (MIT).
 

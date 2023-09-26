@@ -11,8 +11,7 @@ program main
 
     l = lual_newstate()              ! Create Lua state.
     call lual_openlibs(l)            ! Open Lua standard library.
-    rc = lual_dofile(l, 'table.lua') ! Open Lua file.
-    rc = lua_pcall(l, 0, 0, 0)       ! Run the script once.
+    rc = lual_dofile(l, 'table.lua') ! Open and run Lua file.
 
     ! Get the table.
     rc = lua_getglobal(l, 'a')
